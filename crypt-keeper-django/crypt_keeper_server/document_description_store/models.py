@@ -17,11 +17,11 @@ class DocumentMetadata(models.Model):
 
 class DocumentDescription(models.Model):
     document_id = models.AutoField(primary_key=True)
-    customer_id = models.ForeignKey(User)
+    customer = models.ForeignKey(User)
     encrypted_document_key = models.TextField()
     encrypted_document_size = models.BigIntegerField()
     document_metadata = models.ForeignKey(DocumentMetadata)
-    keyId = models.ForeignKey(KeyPair)
+    key_pair = models.ForeignKey(KeyPair)
 
     def __str__(self):
         return 'DocumentDescription: (%s, %s)' % (self.pk, self.document_metadata.name)
