@@ -15,12 +15,15 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from secret_store.api import KeyPairResource, PublicKeyResource, PrivateKeyResource
+from document_description_store.api import DocumentDescriptionResource, DocumentMetadataResource
 from tastypie.api import Api
 
 v1_api = Api(api_name='v1')
 v1_api.register(KeyPairResource())
 v1_api.register(PublicKeyResource())
 v1_api.register(PrivateKeyResource())
+v1_api.register(DocumentDescriptionResource())
+v1_api.register(DocumentMetadataResource())
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
