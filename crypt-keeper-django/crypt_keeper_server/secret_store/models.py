@@ -4,14 +4,14 @@ from django.db import models
 
 
 class PublicKey(models.Model):
-    key = models.TextField
+    key = models.CharField(max_length=2000)
 
     def __str__(self):
         return 'public_key: %s' % self.key
 
 
 class PrivateKey(models.Model):
-    key = models.TextField
+    key = models.CharField(max_length=2000)
 
     def __str__(self):
         return 'private_key: %s' % self.key
