@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'document_description_store',
+    'document_service',
     'secret_store',
     'tastypie',
 )
