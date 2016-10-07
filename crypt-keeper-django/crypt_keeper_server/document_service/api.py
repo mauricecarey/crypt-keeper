@@ -94,7 +94,7 @@ class UploadUrlResource(Resource):
 
         document_id = generate_document_id(document_metadata)
         document = DocumentDescription()
-        # document.document_id = document_id
+        document.document_id = document_id
         document.document_metadata = document_metadata
         document.encrypted_document_key = encrypted_symmetric_key
         document.encrypted_document_size = 1337
