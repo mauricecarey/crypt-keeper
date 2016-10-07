@@ -25,4 +25,5 @@ class DocumentDescription(models.Model):
     key_pair = models.ForeignKey(KeyPair)
 
     def __str__(self):
-        return 'DocumentDescription: (%s, %s, %s)' % (self.pk, self.document_id, self.document_metadata.name)
+        return 'DocumentDescription: (%s, %s, %s, %s)' % (self.pk, self.document_id, self.document_metadata.name,
+                                                          self.key_pair_id)
