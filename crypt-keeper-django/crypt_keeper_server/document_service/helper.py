@@ -5,6 +5,10 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from secret_store.helper import encode_key, decode_key
 from re import match
+from crypt_keeper_server.configuration import CONFIGURATION
+
+SEED_LENGTH = CONFIGURATION.lookup('symmetric_key:seed_length', 128)
+SYMMETRIC_KEY_LENGTH = CONFIGURATION.lookup('symmetric_key:length', 32)
 
 
 def decrypt(encrypted_symmetric_key, private_key):
@@ -33,12 +37,9 @@ def sign_url(document_id):
     return 'signed_url_for(%s)' % document_id
 
 
-def generate_symmetric_key(key_size=None):
-    length = key_size
-    if not length:
-        length = 32
-    seed = '1337:Crypt-Keeper:'.encode('utf-8') + Random.new().read(128)
-    symmetric_key = SHA256.new(seed).digest()[:length]
+def generate_symmetric_key(key_size=SYMMETRIC_KEY_LENGTH):
+    seed = '1337:Crypt-Keeper:'.encode('utf-8') + Random.new().read(SEED_LENGTH)
+    symmetric_key = SHA256.new(seed).digest()[:key_size]
     return encode_key(symmetric_key)
 
 
