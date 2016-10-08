@@ -6,15 +6,12 @@ This project is being created simply to prototype the Crypt-Keeper service quick
     cd crypt-keeper-django
     virtualenv -p `which python3` env
     pip install -r requirements.txt
-
-## Running
-For the first time:
-
-    cd crypt-keeper-django
     cd crypt_keeper_server
     python manage.py migrate
     python manage.py createsuperuser
+    python manage.py generate_key_pair 2048
 
-then:
+## Running
 
+    cd crypt-keeper-django/crypt_keeper_server
     python manage.py runserver
