@@ -1,9 +1,14 @@
+boto3==1.4.1
+botocore==1.4.60
 defusedxml==0.4.1
 Django==1.8.15
 django-tastypie==0.13.3
+docutils==0.12
+jmespath==0.9.0
 lxml==3.6.4
 pycrypto==2.6.1
 python-dateutil==2.5.3
 python-mimeparse==1.5.3
 PyYAML==3.12
+s3transfer==0.1.7
 six==1.10.0
