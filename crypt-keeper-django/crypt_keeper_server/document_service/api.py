@@ -7,7 +7,7 @@ from tastypie.authentication import MultiAuthentication, ApiKeyAuthentication
 from document_description_store.models import DocumentDescription, DocumentMetadata
 from document_description_store import api as document_api
 from secret_store.models import KeyPair
-from .helper import decrypt, sign_url, generate_document_id, generate_symmetric_key, encrypt
+from .helper import decrypt, sign_url, generate_document_id, generate_symmetric_key, encrypt, GET, PUT
 
 ROOT_RESOURCE_NAME = 'document_service'
 
@@ -51,7 +51,7 @@ class DownloadUrlResource(Resource):
     def obj_get(self, bundle, **kwargs):
         document = DocumentDescription.objects.get(document_id=kwargs['pk'])
         symmetric_key = decrypt(document.encrypted_document_key, document.key_pair.private.key)
-        single_use_url = sign_url(document.document_id)
+        single_use_url = sign_url(document.document_id, method=GET)
         download_url = Url(document.document_id, document.document_metadata, single_use_url, symmetric_key)
         return download_url
 
@@ -102,7 +102,7 @@ class UploadUrlResource(Resource):
         document.customer = bundle.request.user
         document.save()
 
-        single_use_url = sign_url(document.document_id)
+        single_use_url = sign_url(document.document_id, method=PUT)
         upload_url = Url(document_id=document.document_id, single_use_url=single_use_url, symmetric_key=symmetric_key)
         bundle.obj = upload_url
         return bundle
