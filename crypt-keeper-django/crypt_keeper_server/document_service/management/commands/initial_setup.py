@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from secret_store.helper import generate_new_key_pair, get_default_key_pair
+from document_service.helper import check_bucket_exists, create_bucket
 from crypt_keeper_server.configuration import CONFIGURATION
 from crypt_keeper_server.settings import PROJECT_NAME
 
@@ -33,7 +34,9 @@ class Command(BaseCommand):
             CONFIGURATION.set('aws:secret_key', secret_key)
         self.stdout.write('Successfully set aws access key "%s"' % access_key)
         # setup bucket name.
-        bucket_name = '%s-%s' % (access_key, options.get('bucket_name', 'crypt-keeper'))
+        bucket_name = '%s-%s' % (access_key.lower(), options.get('bucket_name', 'crypt-keeper'))
+        if not check_bucket_exists(bucket_name):
+            create_bucket(bucket_name)
         CONFIGURATION.set('s3:bucket', bucket_name)
         self.stdout.write('Successfully set bucket name "%s"' % bucket_name)
         # write the configuration to disk.

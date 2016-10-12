@@ -57,6 +57,14 @@ def sign_url(document_id, method=GET):
     return url
 
 
+def check_bucket_exists(bucket_name):
+    return False
+
+
+def create_bucket(bocket_name):
+    pass
+
+
 def generate_symmetric_key(key_size=SYMMETRIC_KEY_LENGTH):
     seed = '1337:Crypt-Keeper:'.encode('utf-8') + Random.new().read(SEED_LENGTH)
     symmetric_key = SHA256.new(seed).digest()[:key_size]
