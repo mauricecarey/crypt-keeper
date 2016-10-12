@@ -24,3 +24,9 @@ def generate_new_key_pair(key_size, key_format):
     key_pair.public = public
     key_pair.save()
     return key_pair
+
+
+def get_default_key_pair():
+    if KeyPair.objects.count() == 0:
+        return None
+    return KeyPair.objects.latest(field_name='created_on')

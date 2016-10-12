@@ -6,7 +6,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.authentication import MultiAuthentication, ApiKeyAuthentication
 from document_description_store.models import DocumentDescription, DocumentMetadata
 from document_description_store import api as document_api
-from secret_store.models import KeyPair
+from secret_store.helper import get_default_key_pair
 from .helper import decrypt, sign_url, generate_document_id, generate_symmetric_key, encrypt, GET, PUT
 
 ROOT_RESOURCE_NAME = 'document_service'
@@ -88,7 +88,9 @@ class UploadUrlResource(Resource):
         document_metadata.uri = document_metadata_map.get('uri')
         document_metadata.save()
 
-        default_key_pair = KeyPair.objects.latest(field_name='created_on')
+        default_key_pair = get_default_key_pair()
+        if not default_key_pair:
+            raise Exception('No default key pair defined.')
         symmetric_key = generate_symmetric_key()
         encrypted_symmetric_key = encrypt(symmetric_key, default_key_pair.public.key)
 
