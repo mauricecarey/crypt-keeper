@@ -1,7 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from Crypto.PublicKey import RSA
-from secret_store.models import KeyPair, PrivateKey, PublicKey
-from secret_store.helper import encode_key
+from secret_store.helper import generate_new_key_pair
 
 
 class Command(BaseCommand):
@@ -14,15 +12,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         key_size = options.get('key_size', 2048)
         key_format = options.get('format', 'PEM')
-        key = RSA.generate(key_size)
-        private = PrivateKey()
-        private.key = encode_key(key.exportKey(format=key_format))
-        private.save()
-        public = PublicKey()
-        public.key = encode_key(key.publickey().exportKey(format=key_format))
-        public.save()
-        key_pair = KeyPair()
-        key_pair.private = private
-        key_pair.public = public
-        key_pair.save()
+        key_pair = generate_new_key_pair(key_size, key_format)
         self.stdout.write('Successfully generated key pair "%s"' % key_pair)
