@@ -9,7 +9,7 @@ This project is being created simply to prototype the Crypt-Keeper service quick
     cd crypt_keeper_server
     python manage.py migrate
     python manage.py createsuperuser
-    python manage.py generate_key_pair 2048
+    python manage.py initial_setup 'aws_access_key' --aws_secret_key key
 
 ## Running
 
