@@ -109,3 +109,4 @@ STATIC_URL = '/static/'
 
 CONFIGURATION_FILE_NAME = os.path.join(os.path.expanduser('~'), 'crypt_keeper_config.yml')
 PROJECT_NAME = 'Crypt-Keeper'
+LOG_LEVEL_DEFAULT = 'ERROR'

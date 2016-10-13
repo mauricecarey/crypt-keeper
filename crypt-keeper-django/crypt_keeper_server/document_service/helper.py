@@ -9,6 +9,11 @@ from boto3 import client
 from botocore.client import Config
 from botocore.exceptions import ClientError
 from crypt_keeper_server.configuration import CONFIGURATION
+from crypt_keeper_server.settings import LOG_LEVEL_DEFAULT
+from logging import getLogger
+
+log = getLogger(__name__)
+log.setLevel(CONFIGURATION.lookup('log:level', LOG_LEVEL_DEFAULT))
 
 PUT = 'PUT'
 GET = 'GET'

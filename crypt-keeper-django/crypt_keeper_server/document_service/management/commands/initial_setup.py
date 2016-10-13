@@ -39,6 +39,9 @@ class Command(BaseCommand):
             create_bucket(bucket_name)
         CONFIGURATION.set('s3:bucket', bucket_name)
         self.stdout.write('Successfully set bucket name "%s"' % bucket_name)
+        # Setup log level.
+        if not CONFIGURATION.lookup('log:level'):
+            CONFIGURATION.set('log:level', 'ERROR')
         # write the configuration to disk.
         CONFIGURATION.write_config()
         self.stdout.write('Successfully wrote configuration to disk.')
