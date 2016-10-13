@@ -7,6 +7,7 @@ from secret_store.helper import encode_key, decode_key
 from re import match
 from boto3 import client
 from botocore.client import Config
+from botocore.exceptions import ClientError
 from crypt_keeper_server.configuration import CONFIGURATION
 
 PUT = 'PUT'
@@ -70,7 +71,12 @@ def sign_url(document_id, method=GET):
 
 
 def check_bucket_exists(bucket_name):
-    return False
+    cl = get_aws_client('s3')
+    try:
+        response = cl.head_bucket(Bucket=bucket_name)
+    except ClientError:
+        return False
+    return response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200
 
 
 def create_bucket(bocket_name):
