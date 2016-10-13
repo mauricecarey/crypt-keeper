@@ -87,8 +87,14 @@ def check_bucket_exists(bucket_name):
     return response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200
 
 
-def create_bucket(bocket_name):
-    pass
+def create_bucket(bucket_name):
+    cl = get_aws_client('s3')
+    try:
+        response = cl.create_bucket(Bucket=bucket_name)
+    except ClientError as e:
+        log.error('There was a ClientError: %s', e)
+        raise e
+    return response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200
 
 
 def generate_symmetric_key(key_size=SYMMETRIC_KEY_LENGTH):
