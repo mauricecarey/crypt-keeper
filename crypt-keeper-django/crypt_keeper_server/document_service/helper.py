@@ -79,8 +79,11 @@ def check_bucket_exists(bucket_name):
     cl = get_aws_client('s3')
     try:
         response = cl.head_bucket(Bucket=bucket_name)
-    except ClientError:
-        return False
+    except ClientError as e:
+        if match(r'^.*(404).*: Not Found$', '%s' % e):
+            return False
+        log.error('There was a ClientError: %s', e)
+        raise e
     return response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200
 
 
