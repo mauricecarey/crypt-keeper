@@ -44,9 +44,21 @@ def encrypt(symmetric_key, public_key):
     return encode_key(encrypted_symmetric_key)
 
 
+def get_aws_client(client_type, config=None):
+    if not config:
+        config = Config(signature_version='s3v4')
+    aws_access_key = CONFIGURATION.lookup('aws:access_key')
+    aws_secret_key = CONFIGURATION.lookup('aws:secret_key')
+    if aws_access_key and aws_secret_key:
+        c = client(client_type, config=config, aws_access_key_id=aws_access_key, aws_secret_access_key=aws_secret_key)
+    else:
+        c = client(client_type, config=config)
+    return c
+
+
 def sign_url(document_id, method=GET):
     client_method = client_method_map.get(method, GET)
-    s3 = client('s3', config=Config(signature_version='s3v4'))
+    s3 = get_aws_client('s3')
     params = {
         'Key': '%s' % document_id,
         'Bucket': S3_BUCKET,
