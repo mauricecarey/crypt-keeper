@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from tastypie.test import ResourceTestCaseMixin
 
-from document_service.helper import decrypt
+from secret_store.helper import decrypt
 from document_description_store.models import DocumentDescription
 
 BASE_DOWNLOAD_URL = '/api/v1/document_service/download_url/'

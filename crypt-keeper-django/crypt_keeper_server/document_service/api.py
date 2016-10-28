@@ -8,8 +8,8 @@ from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.validation import Validation
 from document_description_store.models import DocumentDescription, DocumentMetadata
 from document_description_store import api as document_api
-from secret_store.helper import get_default_key_pair
-from .helper import decrypt, sign_url, generate_document_id, generate_symmetric_key, encrypt, GET, PUT
+from secret_store.helper import get_default_key_pair, decrypt, generate_symmetric_key, encrypt
+from .helper import sign_url, generate_document_id, GET, PUT
 
 ROOT_RESOURCE_NAME = 'document_service'
 
