@@ -4,6 +4,8 @@ from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.authorization import DjangoAuthorization
 from tastypie.authentication import MultiAuthentication, ApiKeyAuthentication
+from tastypie.exceptions import ImmediateHttpResponse
+from tastypie.validation import Validation
 from document_description_store.models import DocumentDescription, DocumentMetadata
 from document_description_store import api as document_api
 from secret_store.helper import get_default_key_pair
@@ -24,6 +26,22 @@ class Url(object):
         self.document_metadata = document_metadata
         self.single_use_url = single_use_url
         self.symmetric_key = symmetric_key
+
+
+class UploadValidation(Validation):
+    def is_valid(self, bundle, request=None):
+        if not bundle.data:
+            return {'__all__': 'Must provide document metadata.'}
+        document_metadata = bundle.data.get('document_metadata', None)
+        if not document_metadata:
+            return {'__all__': 'Must provide document metadata.'}
+
+        errors = {}
+        expected_fields = ['name', 'compressed', 'content_length', 'content_type', 'uri']
+        for field in expected_fields:
+            if document_metadata.get(field, None) is None:
+                errors[field] = 'Document metadata must have field: {field}'.format(field=field)
+        return errors
 
 
 class DownloadUrlResource(Resource):
@@ -69,6 +87,7 @@ class UploadUrlResource(Resource):
         authentication = ApiKeyAuthentication()
         always_return_data = True
         excludes = ['document_metadata']
+        validation = UploadValidation()
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
@@ -79,6 +98,8 @@ class UploadUrlResource(Resource):
         return kwargs
 
     def obj_create(self, bundle, **kwargs):
+        if not super(UploadUrlResource, self).is_valid(bundle):
+            raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
         document_metadata_map = bundle.data.get('document_metadata', {})
         document_metadata = DocumentMetadata()
         document_metadata.compressed = document_metadata_map.get('compressed')
