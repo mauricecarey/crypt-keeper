@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 from tastypie.test import ResourceTestCaseMixin
+from guardian.shortcuts import assign_perm
 
 from secret_store.helper import decrypt
 from document_description_store.models import DocumentDescription
@@ -21,6 +22,11 @@ class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
         self.user = User.objects.get(username=self.username)
 
         self.document = DocumentDescription.objects.get(customer=self.user)
+        # add permissions for authorized user.
+        auth_user = User.objects.get(username='authorized_other')
+        assign_perm('view_document_description', auth_user, self.document)
+        self.assertTrue(auth_user.has_perm('view_document_description', self.document))
+
         self.download_url = '{base_url}{document_id}/'.format(
             base_url=BASE_DOWNLOAD_URL,
             document_id=self.document.document_id,
@@ -73,6 +79,19 @@ class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
 
     def test_download_get_detail_json(self):
         response = self.api_client.get(self.download_url, authentication=self.get_credentials())
+        self.assertValidJSONResponse(response)
+        self.check_download_response(response)
+
+    def test_download_get_detail_json_wrong_user(self):
+        self.assertHttpUnauthorized(
+            self.api_client.get(self.download_url, authentication=self.create_apikey('tester2', self.api_key))
+        )
+
+    def test_download_get_detail_json_authorized_user(self):
+        response = self.api_client.get(
+            self.download_url,
+            authentication=self.create_apikey('authorized_other', self.api_key)
+        )
         self.assertValidJSONResponse(response)
         self.check_download_response(response)
 
