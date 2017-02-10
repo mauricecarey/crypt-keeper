@@ -5,7 +5,7 @@ This project is being created simply to prototype the Crypt-Keeper service quick
 
     cd crypt-keeper-django
     virtualenv -p `which python3` env
-    env/bin/activate
+    source env/bin/activate
     pip install -r requirements.txt
     cd crypt_keeper_server
     python manage.py migrate
