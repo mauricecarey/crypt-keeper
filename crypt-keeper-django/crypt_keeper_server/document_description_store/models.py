@@ -13,7 +13,7 @@ class DocumentMetadata(models.Model):
     compressed = models.BooleanField(default=False)
 
     def __str__(self):
-        return 'DocumentMetadata: (%s, %s)' % (self.pk, self.name)
+        return '(%s, %s)' % (self.pk, self.name)
 
 
 class DocumentDescription(models.Model):
