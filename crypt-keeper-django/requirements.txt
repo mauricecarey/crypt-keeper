@@ -12,4 +12,5 @@ python-mimeparse==1.5.3
 PyYAML==3.12
 s3transfer==0.1.7
 six==1.10.0
+coverage==4.3.4
 django-guardian==1.4.6
