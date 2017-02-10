@@ -8,7 +8,7 @@ BASE_URL = '/api/v1/secret_store'
 
 
 class SecretStoreApiTestCase(ResourceTestCaseMixin, TestCase):
-    fixtures = ['secret_store_test_entries.json']
+    fixtures = ['secret_store_api_test_entries.json']
 
     def setUp(self):
         super(SecretStoreApiTestCase, self).setUp()

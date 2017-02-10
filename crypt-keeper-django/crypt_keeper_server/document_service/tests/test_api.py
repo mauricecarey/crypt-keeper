@@ -172,5 +172,6 @@ class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
         }
         response = self.api_client.post(self.upload_url, data=upload_data, authentication=self.get_credentials())
         self.assertHttpCreated(response)
-        self.assertValidJSON(response.content.decode(response.charset))
+        content = response.content.decode(response.charset)
+        self.assertValidJSON(content)
         self.assertEqual(DocumentDescription.objects.count(), 2)
