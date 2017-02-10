@@ -24,6 +24,11 @@ class DocumentDescription(models.Model):
     document_metadata = models.ForeignKey(DocumentMetadata)
     key_pair = models.ForeignKey(KeyPair)
 
+    class Meta:
+        permissions = (
+            ('view_document_description', 'View Document Description'),
+        )
+
     def __str__(self):
         return 'DocumentDescription: (%s, %s, %s, %s)' % (self.pk, self.document_id, self.document_metadata.name,
                                                           self.key_pair_id)
