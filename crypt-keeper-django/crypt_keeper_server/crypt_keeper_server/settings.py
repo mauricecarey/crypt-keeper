@@ -41,6 +41,12 @@ INSTALLED_APPS = (
     'document_service',
     'secret_store',
     'tastypie',
+    'guardian',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 MIDDLEWARE_CLASSES = (

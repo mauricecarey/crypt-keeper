@@ -13,7 +13,7 @@ class DocumentMetadata(models.Model):
     compressed = models.BooleanField(default=False)
 
     def __str__(self):
-        return 'DocumentMetadata: (%s, %s)' % (self.pk, self.name)
+        return '(%s, %s)' % (self.pk, self.name)
 
 
 class DocumentDescription(models.Model):
@@ -23,6 +23,11 @@ class DocumentDescription(models.Model):
     encrypted_document_size = models.BigIntegerField()
     document_metadata = models.ForeignKey(DocumentMetadata)
     key_pair = models.ForeignKey(KeyPair)
+
+    class Meta:
+        permissions = (
+            ('view_document_description', 'View Document Description'),
+        )
 
     def __str__(self):
         return 'DocumentDescription: (%s, %s, %s, %s)' % (self.pk, self.document_id, self.document_metadata.name,

@@ -18,6 +18,42 @@
   }
 },
 {
+  "pk": 2,
+  "model": "auth.user",
+  "fields": {
+    "date_joined": "2016-10-05T22:47:38.587Z",
+    "is_active": true,
+    "groups": [],
+    "is_staff": true,
+    "username": "tester2",
+    "is_superuser": false,
+    "password": "pbkdf2_sha256$20000$LtYbrOCFU5bk$29hYdfk2rgzU6kUEcaTnH8VLhWlCNyCuVP0s0TP1kkc=",
+    "last_login": "2016-10-05T22:47:54.709Z",
+    "last_name": "",
+    "email": "",
+    "first_name": "",
+    "user_permissions": []
+  }
+},
+{
+  "pk": 3,
+  "model": "auth.user",
+  "fields": {
+    "date_joined": "2016-10-05T22:47:38.587Z",
+    "is_active": true,
+    "groups": [],
+    "is_staff": true,
+    "username": "authorized_other",
+    "is_superuser": false,
+    "password": "pbkdf2_sha256$20000$LtYbrOCFU5bk$29hYdfk2rgzU6kUEcaTnH8VLhWlCNyCuVP0s0TP1kkc=",
+    "last_login": "2016-10-05T22:47:54.709Z",
+    "last_name": "",
+    "email": "",
+    "first_name": "",
+    "user_permissions": []
+  }
+},
+{
   "pk": 1,
   "model": "document_description_store.documentmetadata",
   "fields": {
@@ -70,6 +106,24 @@
     "key": "test",
     "created": "2016-10-05T22:49:20Z",
     "user": 1
+  }
+},
+{
+  "pk": 2,
+  "model": "tastypie.apikey",
+  "fields": {
+    "key": "test",
+    "created": "2016-10-05T22:49:20Z",
+    "user": 2
+  }
+},
+{
+  "pk": 3,
+  "model": "tastypie.apikey",
+  "fields": {
+    "key": "test",
+    "created": "2016-10-05T22:49:20Z",
+    "user": 3
   }
 }
 ]

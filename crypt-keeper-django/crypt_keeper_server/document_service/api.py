@@ -4,7 +4,7 @@ from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.authorization import DjangoAuthorization
 from tastypie.authentication import MultiAuthentication, ApiKeyAuthentication
-from tastypie.exceptions import ImmediateHttpResponse
+from tastypie.exceptions import ImmediateHttpResponse, Unauthorized
 from tastypie.validation import Validation
 from document_description_store.models import DocumentDescription, DocumentMetadata
 from document_description_store import api as document_api
@@ -68,6 +68,9 @@ class DownloadUrlResource(Resource):
 
     def obj_get(self, bundle, **kwargs):
         document = DocumentDescription.objects.get(document_id=kwargs['pk'])
+        user = bundle.request.user
+        if not user.has_perm('view_document_description', document):
+            self.unauthorized_result(Unauthorized('{user} is not authorized.'.format(user=user.username)))
         symmetric_key = decrypt(document.encrypted_document_key, document.key_pair.private.key)
         single_use_url = sign_url(document.document_id, method=GET)
         download_url = Url(document.document_id, document.document_metadata, single_use_url, symmetric_key)
