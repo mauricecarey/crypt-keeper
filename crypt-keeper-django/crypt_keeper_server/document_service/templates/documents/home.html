@@ -1,0 +1,33 @@
+{% extends 'documents/master.html' %}
+{% load humanize %}
+{% load staticfiles %}
+
+{% block links %}
+    <link href="{% static 'documents/theme.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+{% if document_list %}
+<div class="container">
+    <h1>Documents</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Document ID</th>
+                <th>Owner</th>
+                <th>Created On</th>
+            </tr>
+        </thead>
+    {% for document in document_list %}
+        <tr>
+            <td>{{document.document_id}}</td>
+            <td>{{ document.customer.username }}</td>
+            <td>{{ document.created_on }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+{% else %}
+    :)
+{% endif %}
+{% endblock %}}
