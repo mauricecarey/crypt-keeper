@@ -2,6 +2,7 @@ boto3==1.4.1
 botocore==1.4.60
 defusedxml==0.4.1
 Django==1.8.15
+django-debug-toolbar==1.5
 django-tastypie==0.13.3
 docutils==0.12
 jmespath==0.9.0
