@@ -23,6 +23,7 @@ class DocumentDescription(models.Model):
     encrypted_document_size = models.BigIntegerField()
     document_metadata = models.ForeignKey(DocumentMetadata)
     key_pair = models.ForeignKey(KeyPair)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         permissions = (
