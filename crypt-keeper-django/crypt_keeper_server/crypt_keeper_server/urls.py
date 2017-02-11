@@ -14,6 +14,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from secret_store.api import KeyPairResource, PublicKeyResource, PrivateKeyResource
 from document_description_store.api import DocumentDescriptionResource, DocumentMetadataResource
 from document_service.api import DownloadUrlResource, UploadUrlResource
@@ -31,4 +32,6 @@ v1_api.register(UploadUrlResource())
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(v1_api.urls)),
+    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', auth_views.logout, name='logout'),
 ]

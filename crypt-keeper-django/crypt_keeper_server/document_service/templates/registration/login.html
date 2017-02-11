@@ -1,0 +1,18 @@
+{% extends 'documents/master.html' %}
+f{% load staticfiles %}
+
+{% block links %}
+    <link href="{% static 'documents/signin.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form action="{%url 'login' %}" method="post" class="form-signin">
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <input type="hidden" name="next" value="{{next}}">
+            {{form.as_p}}
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            {% csrf_token %}
+        </form>
+    </div>
+{% endblock %}
