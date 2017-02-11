@@ -111,6 +111,16 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(
+        os.path.dirname(__file__),
+        'static',
+    ),
+)
+
 # Custom
 
 CONFIGURATION_FILE_NAME = os.path.join(os.path.expanduser('~'), 'crypt_keeper_config.yml')
