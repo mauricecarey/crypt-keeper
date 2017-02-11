@@ -7,6 +7,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.authentication import MultiAuthentication, ApiKeyAuthentication
 from tastypie.exceptions import ImmediateHttpResponse, Unauthorized
 from tastypie.validation import Validation
+from guardian.shortcuts import assign_perm
 from document_description_store.models import DocumentDescription, DocumentMetadata
 from document_description_store import api as document_api
 from secret_store.helper import get_default_key_pair, decrypt, generate_symmetric_key, encrypt
@@ -69,8 +70,6 @@ class DownloadUrlResource(UrlResource):
         object_class = Url
         authorization = DjangoAuthorization()
         authentication = ApiKeyAuthentication()
-        always_return_data = True
-        validation = UploadValidation()
 
     def obj_get(self, bundle, **kwargs):
         document = DocumentDescription.objects.get(document_id=kwargs['pk'])
@@ -123,6 +122,7 @@ class UploadUrlResource(UrlResource):
         document.key_pair = default_key_pair
         document.customer = bundle.request.user
         document.save()
+        assign_perm('view_document_description', document.customer, document)
 
         single_use_url = sign_url(document.document_id, method=PUT)
         upload_url = Url(document_id=document.document_id, single_use_url=single_use_url, symmetric_key=symmetric_key)
