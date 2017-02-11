@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}" rel="stylesheet" media="screen">
+    {% block links %}{% endblock %}
+    <meta charset="UTF-8">
+    <title>{% block title %}Crypt-Keeper: Share files securely!{% endblock %}</title>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'homepage' %}">Crypt-Keeper</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="{% url 'homepage' %}">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="{%url 'myview'%}">My Documents</a></li>
+              {% if user.is_authenticated %}
+            <li><a href="{%url 'logout'%}?next=/">Logout</a></li>
+              {% else %}
+                  <li><a href="{%url 'login'%}?next=/">Login</a></li>
+              {% endif %}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div id="content" class="container theme-showcase" role="main">
+        {% block content %}{% endblock %}
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+</body>
+</html>
