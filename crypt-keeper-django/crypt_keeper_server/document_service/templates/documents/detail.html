@@ -1,0 +1,30 @@
+{% extends 'documents/master.html' %}
+{% load humanize %}
+{% load staticfiles %}
+
+{% block links %}
+    <link href="{% static 'documents/theme.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Document Description details{% endblock %}
+
+{% block content %}
+{% if document %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1>Document: {{document.document_id}}</h1>
+        </div>
+        <div class="panel-body">
+            <div>Created: {{document.created_on|naturaltime}}</div>
+            <div>Owner: {{ document.customer.username }}</div>
+            <div>File name: {{ document.document_metadata.name }}</div>
+            <div>Content length: {{ document.document_metadata.content_length }}</div>
+        </div>
+    </div>
+            <button type="button" class="btn btn-primary">Share</button>
+</div>
+{% else %}
+    :)
+{% endif %}
+{% endblock %}

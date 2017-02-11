@@ -20,7 +20,7 @@
         </thead>
     {% for document in document_list %}
         <tr>
-            <td>{{document.document_id}}</td>
+            <td><a href="{% url 'detail' pk=document.id %}">{{document.document_id}}</a></td>
             <td>{{ document.customer.username }}</td>
             <td>{{ document.created_on }}</td>
         </tr>

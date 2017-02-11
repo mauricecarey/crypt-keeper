@@ -23,3 +23,9 @@ class MyView(IndexView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(MyView, self).dispatch(*args, **kwargs)
+
+
+class DocumentDetailView(generic.DetailView):
+    model = DocumentDescription
+    template_name = 'documents/detail.html'
+    context_object_name = 'document'
