@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(v1_api.urls)),
     url(r'^$', views.IndexView.as_view(), name='homepage'),
-    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^login/$|^accounts/login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^my/$', views.MyView.as_view(), name='myview'),
     url(r'^detail/(?P<pk>[0-9]+)/$', views.DocumentDetailView.as_view(), name='detail'),
