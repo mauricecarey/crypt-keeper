@@ -1,6 +1,7 @@
 from django.views import generic
 from document_description_store.models import DocumentDescription
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from .forms import ShareForm
 
@@ -43,6 +44,9 @@ class ShareView(generic.FormView):
 
     def form_valid(self, form):
         form.add_view_permission()
+        document_id = form.cleaned_data.get('document_id')
+        if document_id:
+            self.success_url = reverse('detail', kwargs={'pk': document_id})
         return super(ShareView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
