@@ -31,7 +31,7 @@ v1_api.register(DownloadUrlResource())
 v1_api.register(UploadUrlResource())
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls), name='admin'),
     url(r'^api/', include(v1_api.urls)),
     url(r'^$', views.IndexView.as_view(), name='homepage'),
     url(r'^login/$|^accounts/login/$', auth_views.login, name='login'),
