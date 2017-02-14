@@ -47,8 +47,8 @@ class ShareView(generic.FormView):
 
     def get_context_data(self, **kwargs):
         context = super(ShareView, self).get_context_data(**kwargs)
-        document_id = self.request.REQUEST.get('document_id')
-        form = kwargs.get('form')
+        document_id = self.request.GET.get('document_id')
+        form = context.get('form')
         if form:
             form.fields.get('document_id').initial = document_id
         return context
