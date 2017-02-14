@@ -13,8 +13,6 @@
     <form action="{% url 'share' %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-{#        <input name="name">#}
-{#        <input title="document_id" name="document_id" type="hidden" value="{{ document_id }}">#}
         <button type="submit" class="btn btn-primary">Share</button>
     </form>
 </div>
