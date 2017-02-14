@@ -10,9 +10,10 @@ from .forms import ShareForm
 class IndexView(generic.ListView):
     template_name = 'documents/list.html'
     context_object_name = 'document_list'
+    paginate_by = 10
 
     def get_queryset(self):
-        return DocumentDescription.objects.select_related('customer').order_by('-created_on')[:20]
+        return DocumentDescription.objects.select_related('customer').order_by('-created_on')
 
 
 class MyView(IndexView):
