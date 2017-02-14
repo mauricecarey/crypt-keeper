@@ -22,7 +22,9 @@
             <div>Content length: {{ document.document_metadata.content_length }}</div>
         </div>
     </div>
-            <button type="button" class="btn btn-primary">Share</button>
+            <a href="{% url 'share' %}?document_id={{ document.id }}">
+                <button type="button" class="btn btn-primary">Share</button>
+            </a>
 </div>
 {% else %}
     :)

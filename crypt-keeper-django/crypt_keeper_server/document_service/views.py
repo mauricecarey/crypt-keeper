@@ -3,6 +3,7 @@ from django.views import generic
 from document_description_store.models import DocumentDescription
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from .forms import ShareForm
 
 # Create your views here.
 
@@ -29,3 +30,21 @@ class DocumentDetailView(generic.DetailView):
     model = DocumentDescription
     template_name = 'documents/detail.html'
     context_object_name = 'document'
+
+
+class ShareView(generic.FormView):
+    template_name = 'documents/share.html'
+    form_class = ShareForm
+    success_url = '/'
+
+    def form_valid(self, form):
+        form.add_view_permission()
+        return super(ShareView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(ShareView, self).get_context_data(**kwargs)
+        document_id = self.request.REQUEST.get('document_id')
+        form = kwargs.get('form')
+        if form:
+            form.fields.get('document_id').initial = document_id
+        return context

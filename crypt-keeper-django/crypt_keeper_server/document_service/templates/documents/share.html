@@ -1,0 +1,21 @@
+{% extends 'documents/master.html' %}
+{% load humanize %}
+{% load staticfiles %}
+
+{% block links %}
+    <link href="{% static 'documents/theme.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Share Document{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form action="{% url 'share' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+{#        <input name="name">#}
+{#        <input title="document_id" name="document_id" type="hidden" value="{{ document_id }}">#}
+        <button type="submit" class="btn btn-primary">Share</button>
+    </form>
+</div>
+{% endblock %}

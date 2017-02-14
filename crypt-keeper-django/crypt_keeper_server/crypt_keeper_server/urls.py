@@ -38,4 +38,5 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^my/$', views.MyView.as_view(), name='myview'),
     url(r'^detail/(?P<pk>[0-9]+)/$', views.DocumentDetailView.as_view(), name='detail'),
+    url(r'^share/$', views.ShareView.as_view(), name='share')
 ]
