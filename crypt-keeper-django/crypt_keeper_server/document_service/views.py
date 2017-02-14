@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.views import generic
 from document_description_store.models import DocumentDescription
 from django.contrib.auth.decorators import login_required
