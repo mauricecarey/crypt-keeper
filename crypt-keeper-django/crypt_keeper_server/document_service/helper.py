@@ -7,6 +7,8 @@ from botocore.exceptions import ClientError
 from crypt_keeper_server.configuration import CONFIGURATION
 from crypt_keeper_server.settings import LOG_LEVEL_DEFAULT
 from logging import getLogger
+from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist
 
 log = getLogger(__name__)
 log.setLevel(CONFIGURATION.lookup('log:level', LOG_LEVEL_DEFAULT))
@@ -71,3 +73,12 @@ def create_bucket(bucket_name):
 
 def generate_document_id(document_metadata):
     return uuid4()
+
+
+def get_group_for_document(document):
+    group = None
+    try:
+        group = Group.objects.get(name=document.document_id)
+    except ObjectDoesNotExist:
+        pass
+    return group
