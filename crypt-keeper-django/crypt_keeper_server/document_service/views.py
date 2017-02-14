@@ -30,6 +30,10 @@ class DocumentDetailView(generic.DetailView):
     template_name = 'documents/detail.html'
     context_object_name = 'document'
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(DocumentDetailView, self).dispatch(*args, **kwargs)
+
 
 class ShareView(generic.FormView):
     template_name = 'documents/share.html'
@@ -47,3 +51,7 @@ class ShareView(generic.FormView):
         if form:
             form.fields.get('document_id').initial = document_id
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ShareView, self).dispatch(*args, **kwargs)
