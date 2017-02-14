@@ -16,10 +16,34 @@
             <h1>Document: {{document.document_id}}</h1>
         </div>
         <div class="panel-body">
-            <div>Created: {{document.created_on|naturaltime}}</div>
-            <div>Owner: {{ document.customer.username }}</div>
-            <div>File name: {{ document.document_metadata.name }}</div>
-            <div>Content length: {{ document.document_metadata.content_length }}</div>
+            <div class="row-fluid">
+            <div id="document-attributes" class="col-lg-3">
+                <div>Created: {{document.created_on|naturaltime}}</div>
+                <div>Owner: {{ document.customer.username }}</div>
+                <div>File name: {{ document.document_metadata.name }}</div>
+                <div>Content length: {{ document.document_metadata.content_length }}</div>
+            </div>
+            {% if users %}
+                <div id="document-users" class="col-lg-3 pull-right">
+                <table title="Users" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Allowed Users
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            {% endif %}
+            </div>
         </div>
     </div>
             <a href="{% url 'share' %}?document_id={{ document.id }}">
