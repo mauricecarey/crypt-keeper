@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from .forms import ShareForm
+from .helper import get_group_for_document
 
 # Create your views here.
 
@@ -35,6 +36,14 @@ class DocumentDetailView(generic.DetailView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(DocumentDetailView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(DocumentDetailView, self).get_context_data(**kwargs)
+        document = self.object
+        group = get_group_for_document(document)
+        if group:
+            context['users'] = group.user_set.all()
+        return context
 
 
 class ShareView(generic.FormView):
