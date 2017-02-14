@@ -7,7 +7,6 @@
 {% endblock %}
 
 {% block content %}
-{% if document_list %}
 <div class="container">
     <h1>Documents</h1>
     <table class="table table-bordered">
@@ -18,6 +17,7 @@
                 <th>Created On</th>
             </tr>
         </thead>
+{% if document_list %}
     {% for document in document_list %}
         <tr>
             <td><a href="{% url 'detail' pk=document.id %}">{{document.document_id}}</a></td>
@@ -25,9 +25,13 @@
             <td>{{ document.created_on }}</td>
         </tr>
     {% endfor %}
+{% else %}
+    <tr>
+        <td>None</td>
+        <td>None</td>
+        <td>None</td>
+    </tr>
+{% endif %}
     </table>
 </div>
-{% else %}
-    :)
-{% endif %}
 {% endblock %}}
