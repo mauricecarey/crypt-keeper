@@ -9,7 +9,7 @@ from .forms import ShareForm
 
 
 class IndexView(generic.ListView):
-    template_name = 'documents/home.html'
+    template_name = 'documents/list.html'
     context_object_name = 'document_list'
 
     def get_queryset(self):
