@@ -1,6 +1,7 @@
 import json
 from django.http.response import HttpResponseServerError
 from django.contrib.auth.models import Group
+from django.db import transaction
 from tastypie.resources import Resource
 from tastypie import fields
 from tastypie.bundle import Bundle
@@ -108,6 +109,15 @@ class UploadUrlResource(UrlResource):
         current_user = bundle.request.user
 
         document_metadata_map = bundle.data.get('document_metadata', {})
+        document = self.create_document(current_user, default_key_pair, document_metadata_map, encrypted_symmetric_key)
+
+        single_use_url = sign_url(document.document_id, method=PUT)
+        upload_url = Url(document_id=document.document_id, single_use_url=single_use_url, symmetric_key=symmetric_key)
+        bundle.obj = upload_url
+        return bundle
+
+    @transaction.atomic()
+    def create_document(self, current_user, default_key_pair, document_metadata_map, encrypted_symmetric_key):
         document_metadata = DocumentMetadata()
         document_metadata.compressed = document_metadata_map.get('compressed')
         document_metadata.content_length = document_metadata_map.get('content_length')
@@ -125,13 +135,11 @@ class UploadUrlResource(UrlResource):
         document.key_pair = default_key_pair
         document.customer = current_user
         document.save()
-        document_group = Group()
-        document_group.name = document_id
-        document_group.user_set.add(document.customer)
-        document_group.save()
-        assign_perm('view_document_description', document.customer, document)
 
-        single_use_url = sign_url(document.document_id, method=PUT)
-        upload_url = Url(document_id=document.document_id, single_use_url=single_use_url, symmetric_key=symmetric_key)
-        bundle.obj = upload_url
-        return bundle
+        document_group = Group()
+        document_group.name = str(document_id)
+        document_group.save()
+        document_group.user_set.add(document.customer)
+
+        assign_perm('view_document_description', document.customer, document)
+        return document
