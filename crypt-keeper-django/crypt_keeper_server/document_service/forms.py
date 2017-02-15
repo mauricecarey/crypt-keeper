@@ -9,6 +9,7 @@ from .helper import get_group_for_document, get_user_for_username
 class ShareForm(forms.Form):
     name = forms.CharField(required=True)
     document_id = forms.IntegerField(required=True, widget=forms.HiddenInput)
+    user = None
 
     def clean(self):
         cleaned_data = super(ShareForm, self).clean()
@@ -35,7 +36,9 @@ class ShareForm(forms.Form):
             self.add_error('name', 'must be valid username.')
 
         try:
-            DocumentDescription.objects.get(pk=document_id)
+            document = DocumentDescription.objects.get(pk=document_id)
+            if document.customer != self.user:
+                self.add_error('document_id', 'must be owned by logged in user.')
         except ObjectDoesNotExist:
             self.add_error('document_id', 'must provide valid document_id')
 
