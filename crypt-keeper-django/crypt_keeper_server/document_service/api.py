@@ -76,7 +76,8 @@ class DownloadUrlResource(UrlResource):
     def obj_get(self, bundle, **kwargs):
         document = DocumentDescription.objects.get(document_id=kwargs['pk'])
         user = bundle.request.user
-        if not user.has_perm('view_document_description', document):
+        user_in_document_group = user.groups.filter(name=str(document.document_id)).exists()
+        if not user_in_document_group or not user.has_perm('view_document_description', document):
             self.unauthorized_result(Unauthorized('{user} is not authorized.'.format(user=user.username)))
         symmetric_key = decrypt(document.encrypted_document_key, document.key_pair.private.key)
         single_use_url = sign_url(document.document_id, method=GET)

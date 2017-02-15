@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.test import TestCase
 from tastypie.test import ResourceTestCaseMixin
 from guardian.shortcuts import assign_perm
@@ -22,8 +22,14 @@ class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
         self.user = User.objects.get(username=self.username)
 
         self.document = DocumentDescription.objects.get(customer=self.user)
+        # add group for user
+        document_group = Group()
+        document_group.name = str(self.document.document_id)
+        document_group.save()
+        document_group.user_set.add(self.user)
         # add permissions for authorized user.
         auth_user = User.objects.get(username='authorized_other')
+        document_group.user_set.add(auth_user)
         assign_perm('view_document_description', auth_user, self.document)
         self.assertTrue(auth_user.has_perm('view_document_description', self.document))
 
