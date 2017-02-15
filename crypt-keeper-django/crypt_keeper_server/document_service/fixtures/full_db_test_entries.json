@@ -70,6 +70,7 @@
   "fields": {
     "encrypted_document_key": "iZWYHML7/Fm/0q+QuhHQzagIhmty1vADfs1SPIGEq8p2rFwxzI4m1spBtiO0ETmaA5zkBicr95ZfIiLvrR1UG2q/FIB7jagOnKAEuQrQMVbNPHQhn+VV9+e0wuO73lH+k/niswZKamsWa5ENr8C5QY1su8zEBp3Npw+8CMC2Nr6a0fRZRYn+GWOLHwz2bavTaGsgL0Hqvj6KDU5whOCVZbWkdTKOQuxxTTp97j1sb71whGw0TfERiX0IygDgBTj2fJ1G74JXxh5zgsvGjxoC5BgP6iyQu0iKVfGI7T10Oa5wSLZLRkUEWQBzAwM/p2I0VdHGHregfcWWI/smaA68RQ==",
     "customer": 1,
+    "created_on": "2016-10-07T22:14:00.619Z",
     "document_id": "a20277a7-d0a4-45cc-9556-eb670c027ed6",
     "key_pair": 1,
     "document_metadata": 1,
