@@ -1,5 +1,6 @@
 import json
 from django.http.response import HttpResponseServerError
+from django.contrib.auth.models import Group
 from tastypie.resources import Resource
 from tastypie import fields
 from tastypie.bundle import Bundle
@@ -122,6 +123,10 @@ class UploadUrlResource(UrlResource):
         document.key_pair = default_key_pair
         document.customer = bundle.request.user
         document.save()
+        document_group = Group()
+        document_group.name = document_id
+        document_group.user_set.add(document.customer)
+        document_group.save()
         assign_perm('view_document_description', document.customer, document)
 
         single_use_url = sign_url(document.document_id, method=PUT)
