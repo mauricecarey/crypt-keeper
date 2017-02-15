@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 from crypt_keeper_server.configuration import CONFIGURATION
 from crypt_keeper_server.settings import LOG_LEVEL_DEFAULT
 from logging import getLogger
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist
 
 log = getLogger(__name__)
@@ -82,3 +82,12 @@ def get_group_for_document(document):
     except ObjectDoesNotExist:
         pass
     return group
+
+
+def get_user_for_username(username):
+    user = None
+    try:
+        user = User.objects.get(username=username)
+    except ObjectDoesNotExist:
+        pass
+    return user
