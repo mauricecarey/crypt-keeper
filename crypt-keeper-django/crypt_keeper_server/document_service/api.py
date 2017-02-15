@@ -97,6 +97,16 @@ class UploadUrlResource(UrlResource):
     def obj_create(self, bundle, **kwargs):
         if not super(UploadUrlResource, self).is_valid(bundle):
             raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
+
+        default_key_pair = get_default_key_pair()
+        if not default_key_pair:
+            e = Exception('No default key pair defined.')
+            e.response = HttpResponseServerError('Internal configuration error: No default key pair defined.')
+            raise e
+        symmetric_key = generate_symmetric_key()
+        encrypted_symmetric_key = encrypt(symmetric_key, default_key_pair.public.key)
+        current_user = bundle.request.user
+
         document_metadata_map = bundle.data.get('document_metadata', {})
         document_metadata = DocumentMetadata()
         document_metadata.compressed = document_metadata_map.get('compressed')
@@ -106,14 +116,6 @@ class UploadUrlResource(UrlResource):
         document_metadata.uri = document_metadata_map.get('uri')
         document_metadata.save()
 
-        default_key_pair = get_default_key_pair()
-        if not default_key_pair:
-            e = Exception('No default key pair defined.')
-            e.response = HttpResponseServerError('Internal configuration error: No default key pair defined.')
-            raise e
-        symmetric_key = generate_symmetric_key()
-        encrypted_symmetric_key = encrypt(symmetric_key, default_key_pair.public.key)
-
         document_id = generate_document_id(document_metadata)
         document = DocumentDescription()
         document.document_id = document_id
@@ -121,7 +123,7 @@ class UploadUrlResource(UrlResource):
         document.encrypted_document_key = encrypted_symmetric_key
         document.encrypted_document_size = 1337
         document.key_pair = default_key_pair
-        document.customer = bundle.request.user
+        document.customer = current_user
         document.save()
         document_group = Group()
         document_group.name = document_id
