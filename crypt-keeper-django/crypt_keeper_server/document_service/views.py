@@ -58,14 +58,9 @@ class ShareView(generic.FormView):
             self.success_url = reverse('detail', kwargs={'pk': document_id})
         return super(ShareView, self).form_valid(form)
 
-    def get_context_data(self, **kwargs):
-        context = super(ShareView, self).get_context_data(**kwargs)
-        document_id = self.request.GET.get('document_id')
-        form = context.get('form')
-        if form:
-            form.fields.get('document_id').initial = document_id
-        return context
-
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
+        self.initial.update({
+            'document_id': self.request.GET.get('document_id')
+        })
         return super(ShareView, self).dispatch(*args, **kwargs)
