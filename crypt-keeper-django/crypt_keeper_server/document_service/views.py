@@ -51,6 +51,11 @@ class ShareView(generic.FormView):
     form_class = ShareForm
     success_url = '/'
 
+    def get_form(self, form_class=None):
+        form = super(ShareView, self).get_form(form_class)
+        form.user = self.request.user
+        return form
+
     def form_valid(self, form):
         form.add_view_permission()
         document_id = form.cleaned_data.get('document_id')
