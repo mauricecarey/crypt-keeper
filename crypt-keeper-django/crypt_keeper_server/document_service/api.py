@@ -125,6 +125,7 @@ class UploadUrlResource(UrlResource):
         document_metadata.content_type = document_metadata_map.get('content_type')
         document_metadata.name = document_metadata_map.get('name')
         document_metadata.uri = document_metadata_map.get('uri')
+        document_metadata.encryption_type = document_metadata_map.get('encryption_type')
         document_metadata.save()
 
         document_id = generate_document_id(document_metadata)

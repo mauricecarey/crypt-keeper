@@ -14,6 +14,7 @@ log.setLevel(CONFIGURATION.lookup('log:level', LOG_LEVEL_DEFAULT))
 
 SEED_LENGTH = CONFIGURATION.lookup('symmetric_key:seed_length', 128)
 SYMMETRIC_KEY_LENGTH = CONFIGURATION.lookup('symmetric_key:length', 32)
+AES_CBC = 'AES|CBC'
 
 
 def encode_key(key_bytes):

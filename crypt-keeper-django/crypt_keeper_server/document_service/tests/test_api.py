@@ -3,7 +3,7 @@ from django.test import TestCase
 from tastypie.test import ResourceTestCaseMixin
 from guardian.shortcuts import assign_perm
 
-from secret_store.helper import decrypt
+from secret_store.helper import decrypt, AES_CBC
 from document_description_store.models import DocumentDescription
 
 BASE_DOWNLOAD_URL = '/api/v1/document_service/download_url/'
@@ -47,6 +47,7 @@ class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
             'content_length': str(self.document.document_metadata.content_length),
             'name': self.document.document_metadata.name,
             'uri': self.document.document_metadata.uri,
+            'encryption_type': AES_CBC,
         }
 
     def get_credentials(self):
