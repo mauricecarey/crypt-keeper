@@ -12,7 +12,7 @@ class HomeView(generic.TemplateView):
     template_name = 'documents/home.html'
 
 
-class IndexView(generic.ListView):
+class IndexView(LoginRequiredMixin, generic.ListView):
     template_name = 'documents/list.html'
     context_object_name = 'document_list'
     paginate_by = 10
@@ -21,7 +21,7 @@ class IndexView(generic.ListView):
         return DocumentDescription.objects.select_related('customer').order_by('-created_on')
 
 
-class MyView(LoginRequiredMixin, IndexView):
+class MyView(IndexView):
     def get_queryset(self):
         return DocumentDescription.objects.select_related('customer').filter(customer=self.request.user.id).order_by('-created_on')
 
