@@ -8,6 +8,10 @@ from .helper import get_group_for_document
 # Create your views here.
 
 
+class HomeView(generic.TemplateView):
+    template_name = 'documents/home.html'
+
+
 class IndexView(generic.ListView):
     template_name = 'documents/list.html'
     context_object_name = 'document_list'

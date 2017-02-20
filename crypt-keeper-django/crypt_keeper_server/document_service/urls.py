@@ -16,7 +16,7 @@ v1_api.register(DownloadUrlResource())
 v1_api.register(UploadUrlResource())
 
 urlpatterns = [
-    url(r'^$', views.IndexView.as_view(), name='homepage'),
+    url(r'^$', views.HomeView.as_view(), name='homepage'),
     url(r'^my/$', views.MyView.as_view(), name='myview'),
     url(r'^detail/(?P<pk>[0-9]+)/$', views.DocumentDetailView.as_view(), name='detail'),
     url(r'^share/$', views.ShareView.as_view(), name='share'),
