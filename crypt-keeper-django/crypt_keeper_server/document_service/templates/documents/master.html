@@ -30,8 +30,10 @@
             {% endif %}
             {% if user.is_authenticated %}
                 <li><a href="{% url 'logout' %}?next=/">Logout</a></li>
+                <li><a href="{% url 'password_change' %}">Change Password</a></li>
             {% else %}
                 <li><a href="{% url 'login' %}?next=/">Login</a></li>
+                <li><a href="{% url 'password_reset' %}">Reset Password</a></li>
             {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
