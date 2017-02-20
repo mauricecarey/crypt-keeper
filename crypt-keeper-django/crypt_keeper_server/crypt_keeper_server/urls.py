@@ -14,29 +14,13 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
-from secret_store.api import KeyPairResource, PublicKeyResource, PrivateKeyResource
-from document_description_store.api import DocumentDescriptionResource, DocumentMetadataResource
-from document_service.api import DownloadUrlResource, UploadUrlResource
-from document_service import views
-from tastypie.api import Api
+from django.contrib.auth import urls as auth_urls
+from document_service import urls as document_service_urls
 
-v1_api = Api(api_name='v1')
-v1_api.register(KeyPairResource())
-v1_api.register(PublicKeyResource())
-v1_api.register(PrivateKeyResource())
-v1_api.register(DocumentDescriptionResource())
-v1_api.register(DocumentMetadataResource())
-v1_api.register(DownloadUrlResource())
-v1_api.register(UploadUrlResource())
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls), name='admin'),
-    url(r'^api/', include(v1_api.urls)),
-    url(r'^$', views.IndexView.as_view(), name='homepage'),
     url(r'^login/$|^accounts/login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
-    url(r'^my/$', views.MyView.as_view(), name='myview'),
-    url(r'^detail/(?P<pk>[0-9]+)/$', views.DocumentDetailView.as_view(), name='detail'),
-    url(r'^share/$', views.ShareView.as_view(), name='share')
+    url(r'^', include(document_service_urls)),
 ]
