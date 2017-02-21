@@ -2,3 +2,4 @@ crypt-keeper-django/env
 *.pyc
 .idea
 *.sqlite3
+.coverage
