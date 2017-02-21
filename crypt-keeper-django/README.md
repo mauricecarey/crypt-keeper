@@ -1,6 +1,9 @@
 # Crypt-Keeper Django Prototype Server
 This project is being created simply to prototype the Crypt-Keeper service quickly, and will not implement the Dynamo backing store. Definitely not recommended for heavy traffic, but should be able to handle moderate traffic using Postgres or mysql data store.
 
+## Requirements
+This project was developed with Python 3.5.2 and should run on any newer version of Python. Additional requirements are installed via *pip* in the section on installing.
+
 ## Installing
 
     cd crypt-keeper-django
