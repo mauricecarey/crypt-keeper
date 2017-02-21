@@ -1,0 +1,9 @@
+[submodule "crypt-keeper-vagrant/salt/imports/docker-formula"]
+	path = crypt-keeper-vagrant/salt/imports/docker-formula
+	url = https://mauricecarey@github.com/mauricecarey/docker-formula.git
+[submodule "crypt-keeper-vagrant/salt/imports/apache-formula"]
+	path = crypt-keeper-vagrant/salt/imports/apache-formula
+	url = https://mauricecarey@github.com/mauricecarey/apache-formula.git
+[submodule "crypt-keeper-vagrant/salt/imports/dnsmasq-formula"]
+	path = crypt-keeper-vagrant/salt/imports/dnsmasq-formula
+	url = https://mauricecarey@github.com/mauricecarey/dnsmasq-formula.git

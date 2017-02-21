@@ -1,0 +1,27 @@
+base-box: ubuntu/trusty64
+cache-deb: true
+persistent-storage-enabled: true
+
+machines:
+  ck:
+    cpus: 1
+    memory: 2048
+    avahi: true
+    ports:
+      postgres:
+        guest: 5432
+        host: 5432
+      redis:
+        guest: 6379
+        host: 6379
+      apache:
+        guest: 80
+        host: 8081
+    ssh-key:
+      local-ssh-path: ~/.ssh
+      server-ssh-path: /srv/ssh-key/
+    salt:
+      run-highstate: true
+      minion-config: ./minion.conf
+      local-salt-path: ./salt
+      server-salt-path: /srv/salt/
