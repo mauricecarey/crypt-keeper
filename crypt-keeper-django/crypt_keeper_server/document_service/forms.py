@@ -3,6 +3,11 @@ from guardian.shortcuts import assign_perm
 from django.core.exceptions import ObjectDoesNotExist
 from document_description_store.models import DocumentDescription
 from .helper import get_group_for_document, get_user_for_username
+from django.conf import settings
+from logging import getLogger, INFO
+
+log = getLogger(__name__)
+log.setLevel(settings.LOG_LEVEL)
 
 
 class ShareForm(forms.Form):
@@ -51,3 +56,8 @@ class ShareForm(forms.Form):
             group.user_set.add(user)
             group.save()
         assign_perm('view_document_description', user, document)
+        if log.isEnabledFor(INFO):
+            log.info('Adding permissions for {new_user} to access document id {document_id}.'.format(
+                new_user=user,
+                document_id=document_id,
+            ))

@@ -13,6 +13,11 @@ from document_description_store.models import DocumentDescription, DocumentMetad
 from document_description_store import api as document_api
 from secret_store.helper import get_default_key_pair, decrypt, generate_symmetric_key, encrypt
 from .helper import sign_url, generate_document_id, GET, PUT
+from django.conf import settings
+from logging import getLogger, DEBUG
+
+log = getLogger(__name__)
+log.setLevel(settings.LOG_LEVEL)
 
 ROOT_RESOURCE_NAME = 'document_service'
 
@@ -77,10 +82,19 @@ class DownloadUrlResource(UrlResource):
         user = bundle.request.user
         user_in_document_group = user.groups.filter(name=str(document.document_id)).exists()
         if not user_in_document_group or not user.has_perm('view_document_description', document):
+            log.warning('{user} attempted to access {document_id}'.format(
+                user=user.username,
+                document_id=document.document_id,
+            ))
             self.unauthorized_result(Unauthorized('{user} is not authorized.'.format(user=user.username)))
         symmetric_key = decrypt(document.encrypted_document_key, document.key_pair.private.key)
         single_use_url = sign_url(document.document_id, method=GET)
         download_url = Url(document.document_id, document.document_metadata, single_use_url, symmetric_key)
+        if log.isEnabledFor(DEBUG):
+            log.debug('Generated download URL {download_url} for {user}.'.format(
+                download_url=download_url,
+                user=user.username,
+            ))
         return download_url
 
 
@@ -101,8 +115,10 @@ class UploadUrlResource(UrlResource):
 
         default_key_pair = get_default_key_pair()
         if not default_key_pair:
-            e = Exception('No default key pair defined.')
-            e.response = HttpResponseServerError('Internal configuration error: No default key pair defined.')
+            err = 'No default key pair defined.'
+            e = Exception(err)
+            e.response = HttpResponseServerError('Internal configuration error: {error}.'.format(error=err))
+            log.critical(err)
             raise e
         symmetric_key = generate_symmetric_key()
         encrypted_symmetric_key = encrypt(symmetric_key, default_key_pair.public.key)
@@ -113,6 +129,11 @@ class UploadUrlResource(UrlResource):
 
         single_use_url = sign_url(document.document_id, method=PUT)
         upload_url = Url(document_id=document.document_id, single_use_url=single_use_url, symmetric_key=symmetric_key)
+        if log.isEnabledFor(DEBUG):
+            log.debug('Generated upload URL {upload_url} for {user}.'.format(
+                upload_url=upload_url,
+                user=current_user.username,
+            ))
         bundle.obj = upload_url
         return bundle
 

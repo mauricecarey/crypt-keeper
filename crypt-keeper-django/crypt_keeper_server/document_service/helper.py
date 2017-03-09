@@ -4,7 +4,7 @@ from boto3 import client
 from botocore.client import Config
 from botocore.exceptions import ClientError
 from django.conf import settings
-from logging import getLogger
+from logging import getLogger, WARN
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -78,7 +78,10 @@ def get_group_for_document(document):
     try:
         group = Group.objects.get(name=document.document_id)
     except ObjectDoesNotExist:
-        pass
+        if log.isEnabledFor(WARN):
+            log.warning('Attempt to lookup non-existent group for document id {document_id}.'.format(
+                document_id=document.document_id,
+            ))
     return group
 
 
@@ -87,5 +90,6 @@ def get_user_for_username(username):
     try:
         user = User.objects.get(username=username)
     except ObjectDoesNotExist:
-        pass
+        if log.isEnabledFor(WARN):
+            log.warning('Attempt to lookup non-existent user with name {username}.'.format(username=username))
     return user

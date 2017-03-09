@@ -6,7 +6,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from .models import KeyPair, PrivateKey, PublicKey
 from django.conf import settings
-from logging import getLogger
+from logging import getLogger, INFO
 
 log = getLogger(__name__)
 log.setLevel(settings.LOG_LEVEL)
@@ -36,6 +36,8 @@ def generate_new_key_pair(key_size, key_format):
     key_pair.private = private
     key_pair.public = public
     key_pair.save()
+    if log.isEnabledFor(INFO):
+        log.warning('Generated new key pair {key_pair}.'.format(key_pair=key_pair.pk))
     return key_pair
 
 
