@@ -3,19 +3,18 @@ from re import match
 from boto3 import client
 from botocore.client import Config
 from botocore.exceptions import ClientError
-from crypt_keeper_server.configuration import CONFIGURATION
-from crypt_keeper_server.settings import LOG_LEVEL_DEFAULT
+from django.conf import settings
 from logging import getLogger
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist
 
 log = getLogger(__name__)
-log.setLevel(CONFIGURATION.lookup('log:level', LOG_LEVEL_DEFAULT))
+log.setLevel(settings.LOG_LEVEL)
 
 PUT = 'PUT'
 GET = 'GET'
-S3_URL_EXPIRATION_TIMEOUT = CONFIGURATION.lookup('s3:url_expiration_timeout', 600)
-S3_BUCKET = CONFIGURATION.lookup('s3:bucket')
+S3_URL_EXPIRATION_TIMEOUT = settings.CONFIGURATION.lookup('s3:url_expiration_timeout', 600)
+S3_BUCKET = settings.CONFIGURATION.lookup('s3:bucket')
 
 client_method_map = {
     GET: 'get_object',

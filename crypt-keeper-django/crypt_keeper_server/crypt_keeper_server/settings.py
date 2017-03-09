@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from .configuration import Configuration, log as configuration_log
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -126,4 +127,11 @@ STATICFILES_DIRS = (
 
 CONFIGURATION_FILE_NAME = os.path.join(os.path.expanduser('~'), 'crypt_keeper_config.yml')
 PROJECT_NAME = 'Crypt-Keeper'
+
+# Configure logging
 LOG_LEVEL_DEFAULT = 'ERROR'
+configuration_log.setLevel(LOG_LEVEL_DEFAULT)
+CONFIGURATION = Configuration(CONFIGURATION_FILE_NAME)
+LOG_LEVEL = CONFIGURATION.lookup('log:level', LOG_LEVEL_DEFAULT)
+configuration_log.setLevel(LOG_LEVEL)
+LOG_FORMAT = CONFIGURATION.lookup('log:format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s')

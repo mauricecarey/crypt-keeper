@@ -1,13 +1,11 @@
 from logging import StreamHandler, Formatter, getLogger
-from .configuration import CONFIGURATION
-from .settings import LOG_LEVEL_DEFAULT
+from django.conf import settings
 
-# setup logging for roor logger.
+# setup logging for root logger.
 __console_handler = StreamHandler()
-__console_handler.setLevel(CONFIGURATION.lookup('log:level', LOG_LEVEL_DEFAULT))
+__console_handler.setLevel(settings.LOG_LEVEL)
 
-__formatter = Formatter(CONFIGURATION.lookup('log:format',
-                                                     '%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+__formatter = Formatter(settings.LOG_FORMAT)
 __console_handler.setFormatter(__formatter)
 
 log = getLogger()

@@ -5,15 +5,14 @@ from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from .models import KeyPair, PrivateKey, PublicKey
-from crypt_keeper_server.configuration import CONFIGURATION
-from crypt_keeper_server.settings import LOG_LEVEL_DEFAULT
+from django.conf import settings
 from logging import getLogger
 
 log = getLogger(__name__)
-log.setLevel(CONFIGURATION.lookup('log:level', LOG_LEVEL_DEFAULT))
+log.setLevel(settings.LOG_LEVEL)
 
-SEED_LENGTH = CONFIGURATION.lookup('symmetric_key:seed_length', 128)
-SYMMETRIC_KEY_LENGTH = CONFIGURATION.lookup('symmetric_key:length', 32)
+SEED_LENGTH = settings.CONFIGURATION.lookup('symmetric_key:seed_length', 128)
+SYMMETRIC_KEY_LENGTH = settings.CONFIGURATION.lookup('symmetric_key:length', 32)
 AES_CBC = 'AES|CBC'
 
 

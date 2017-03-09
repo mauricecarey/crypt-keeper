@@ -1,8 +1,8 @@
 from yaml import load, dump
-import logging
-from .settings import CONFIGURATION_FILE_NAME
+from warnings import warn
+from logging import getLogger
 
-log = logging.getLogger(__name__)
+log = getLogger(__name__)
 
 
 class Configuration(object):
@@ -53,5 +53,3 @@ class Configuration(object):
         if val:
             return val
         return default
-
-CONFIGURATION = Configuration(CONFIGURATION_FILE_NAME)
