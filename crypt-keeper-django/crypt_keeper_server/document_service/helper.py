@@ -25,8 +25,8 @@ client_method_map = {
 def get_aws_client(client_type, config=None):
     if not config:
         config = Config(signature_version='s3v4')
-    aws_access_key = CONFIGURATION.lookup('aws:access_key')
-    aws_secret_key = CONFIGURATION.lookup('aws:secret_key')
+    aws_access_key = settings.CONFIGURATION.lookup('aws:access_key')
+    aws_secret_key = settings.CONFIGURATION.lookup('aws:secret_key')
     if aws_access_key and aws_secret_key:
         c = client(client_type, config=config, aws_access_key_id=aws_access_key, aws_secret_access_key=aws_secret_key)
     else:
