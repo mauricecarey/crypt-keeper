@@ -17,13 +17,18 @@ class Configuration(object):
                 self.config = load(open(self.filename, 'r', encoding='utf-8'))
                 if not self.config:
                     self.config = {}
-            except IOError:
+            except IOError as e:
                 log.warning('Could not load configuration from file "%s". Will use defaults.')
+                raise e
 
     def write_config(self):
         if self.filename:
             with open(self.filename, 'w') as file:
                 file.write(dump(self.config, default_flow_style=False))
+        else:
+            err = 'No filename defined.'
+            log.error(err)
+            warn(err)
 
     def __str__(self):
         return '%s' % self.config
