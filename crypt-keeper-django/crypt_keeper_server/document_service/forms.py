@@ -1,6 +1,5 @@
 from django import forms
 from guardian.shortcuts import assign_perm
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from document_description_store.models import DocumentDescription
 from .helper import get_group_for_document, get_user_for_username

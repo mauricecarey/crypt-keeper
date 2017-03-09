@@ -1,4 +1,3 @@
-import json
 from django.http.response import HttpResponseServerError
 from django.contrib.auth.models import Group
 from django.db import transaction
@@ -6,7 +5,7 @@ from tastypie.resources import Resource
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.authorization import DjangoAuthorization
-from tastypie.authentication import MultiAuthentication, ApiKeyAuthentication
+from tastypie.authentication import ApiKeyAuthentication
 from tastypie.exceptions import ImmediateHttpResponse, Unauthorized
 from tastypie.validation import Validation
 from guardian.shortcuts import assign_perm

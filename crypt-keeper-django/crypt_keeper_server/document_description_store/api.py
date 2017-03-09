@@ -1,7 +1,7 @@
 from tastypie.resources import ModelResource
 from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
-from tastypie.authentication import MultiAuthentication, ApiKeyAuthentication
+from tastypie.authentication import ApiKeyAuthentication
 from .models import DocumentDescription, DocumentMetadata
 
 ROOT_RESOURCE_NAME = 'document_description_store'
