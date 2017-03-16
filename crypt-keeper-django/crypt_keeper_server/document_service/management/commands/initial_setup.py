@@ -1,8 +1,10 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.conf import settings
 from secret_store.helper import generate_new_key_pair, get_default_key_pair
 from document_service.helper import check_bucket_exists, create_bucket
-from crypt_keeper_server.configuration import CONFIGURATION
-from crypt_keeper_server.settings import PROJECT_NAME
+
+PROJECT_NAME = settings.PROJECT_NAME
+CONFIGURATION = settings.CONFIGURATION
 
 
 class Command(BaseCommand):
