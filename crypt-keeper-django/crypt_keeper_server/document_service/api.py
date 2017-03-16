@@ -11,7 +11,7 @@ from tastypie.validation import Validation
 from guardian.shortcuts import assign_perm
 from document_description_store.models import DocumentDescription, DocumentMetadata
 from document_description_store import api as document_api
-from secret_store.helper import get_default_key_pair, decrypt, generate_symmetric_key, encrypt
+from secret_store.helper import get_default_key_pair, decrypt, generate_symmetric_key, encrypt, AES_CBC
 from .helper import sign_url, generate_document_id, GET, PUT
 from django.conf import settings
 from logging import getLogger, DEBUG
@@ -163,7 +163,7 @@ class UploadUrlResource(UrlResource):
         document_metadata.content_type = document_metadata_map.get('content_type')
         document_metadata.name = document_metadata_map.get('name')
         document_metadata.uri = document_metadata_map.get('uri')
-        document_metadata.encryption_type = document_metadata_map.get('encryption_type')
+        document_metadata.encryption_type = document_metadata_map.get('encryption_type', AES_CBC)
         document_metadata.save()
         if log.isEnabledFor(DEBUG):
             log.debug('Created document metadata for request: {meta}.'.format(
