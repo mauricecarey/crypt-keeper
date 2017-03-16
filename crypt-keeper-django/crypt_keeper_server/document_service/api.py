@@ -112,6 +112,7 @@ class UploadUrlResource(UrlResource):
     def obj_create(self, bundle, **kwargs):
         if not super(UploadUrlResource, self).is_valid(bundle):
             raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
+        log.info('Received request to create a new document upload record.')
 
         default_key_pair = get_default_key_pair()
         if not default_key_pair:
@@ -121,13 +122,31 @@ class UploadUrlResource(UrlResource):
             log.critical(err)
             raise e
         symmetric_key = generate_symmetric_key()
+        if log.isEnabledFor(DEBUG):
+            log.debug('Generated symmetric key for request: {key}.'.format(
+                key=symmetric_key
+            ))
         encrypted_symmetric_key = encrypt(symmetric_key, default_key_pair.public.key)
+        if log.isEnabledFor(DEBUG):
+            log.debug('Encrypted symmetric key for request: {key}.'.format(
+                key=encrypted_symmetric_key
+            ))
         current_user = bundle.request.user
+        if log.isEnabledFor(DEBUG):
+            log.debug('User for request: {user}.'.format(
+                user=current_user
+            ))
 
         document_metadata_map = bundle.data.get('document_metadata', {})
         document = self.create_document(current_user, default_key_pair, document_metadata_map, encrypted_symmetric_key)
+        log.info('Document created for request.')
 
         single_use_url = sign_url(document.document_id, method=PUT)
+        if log.isEnabledFor(DEBUG):
+            log.debug('Created single use URL for request: {url}.'.format(
+                url=single_use_url
+            ))
+
         upload_url = Url(document_id=document.document_id, single_use_url=single_use_url, symmetric_key=symmetric_key)
         if log.isEnabledFor(DEBUG):
             log.debug('Generated upload URL {upload_url} for {user}.'.format(
@@ -147,6 +166,10 @@ class UploadUrlResource(UrlResource):
         document_metadata.uri = document_metadata_map.get('uri')
         document_metadata.encryption_type = document_metadata_map.get('encryption_type')
         document_metadata.save()
+        if log.isEnabledFor(DEBUG):
+            log.debug('Created document metadata for request: {meta}.'.format(
+                meta=document_metadata
+            ))
 
         document_id = generate_document_id(document_metadata)
         document = DocumentDescription()
@@ -157,11 +180,19 @@ class UploadUrlResource(UrlResource):
         document.key_pair = default_key_pair
         document.customer = current_user
         document.save()
+        if log.isEnabledFor(DEBUG):
+            log.debug('Created document for request: {document}.'.format(
+                document=document
+            ))
 
         document_group = Group()
         document_group.name = str(document_id)
         document_group.save()
         document_group.user_set.add(document.customer)
+        if log.isEnabledFor(DEBUG):
+            log.debug('Created document group for request: {group}.'.format(
+                group=document_group
+            ))
 
         assign_perm('view_document_description', document.customer, document)
         return document
