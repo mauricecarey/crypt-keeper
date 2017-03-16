@@ -2,7 +2,7 @@ from yaml import load, dump
 from warnings import warn
 from logging import getLogger
 
-log = getLogger(__name__)
+log = getLogger('crypt-keeper.' + __name__)
 
 
 class Configuration(object):

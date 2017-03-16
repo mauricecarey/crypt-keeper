@@ -8,8 +8,7 @@ from .models import KeyPair, PrivateKey, PublicKey
 from django.conf import settings
 from logging import getLogger, INFO
 
-log = getLogger(__name__)
-log.setLevel(settings.LOG_LEVEL)
+log = getLogger('crypt-keeper.' + __name__)
 
 SEED_LENGTH = settings.CONFIGURATION.lookup('symmetric_key:seed_length', 128)
 SYMMETRIC_KEY_LENGTH = settings.CONFIGURATION.lookup('symmetric_key:length', 32)

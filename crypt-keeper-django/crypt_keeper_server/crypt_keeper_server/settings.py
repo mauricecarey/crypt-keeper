@@ -129,9 +129,35 @@ CONFIGURATION_FILE_NAME = os.path.join(os.path.expanduser('~'), 'crypt_keeper_co
 PROJECT_NAME = 'Crypt-Keeper'
 
 # Configure logging
-LOG_LEVEL_DEFAULT = 'ERROR'
-configuration_log.setLevel(LOG_LEVEL_DEFAULT)
+
 CONFIGURATION = Configuration(CONFIGURATION_FILE_NAME)
-LOG_LEVEL = CONFIGURATION.lookup('log:level', LOG_LEVEL_DEFAULT)
-configuration_log.setLevel(LOG_LEVEL)
 LOG_FORMAT = CONFIGURATION.lookup('log:format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': LOG_FORMAT,
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'crypt-keeper': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+
+    },
+}

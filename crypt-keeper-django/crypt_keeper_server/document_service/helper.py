@@ -8,8 +8,7 @@ from logging import getLogger, WARN
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist
 
-log = getLogger(__name__)
-log.setLevel(settings.LOG_LEVEL)
+log = getLogger('crypt-keeper.' + __name__)
 
 PUT = 'PUT'
 GET = 'GET'

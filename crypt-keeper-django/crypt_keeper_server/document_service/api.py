@@ -16,8 +16,7 @@ from .helper import sign_url, generate_document_id, GET, PUT
 from django.conf import settings
 from logging import getLogger, DEBUG
 
-log = getLogger(__name__)
-log.setLevel(settings.LOG_LEVEL)
+log = getLogger('crypt-keeper.' + __name__)
 
 ROOT_RESOURCE_NAME = 'document_service'
 

@@ -6,8 +6,7 @@ from .helper import get_group_for_document, get_user_for_username
 from django.conf import settings
 from logging import getLogger, INFO
 
-log = getLogger(__name__)
-log.setLevel(settings.LOG_LEVEL)
+log = getLogger('crypt-keeper.' + __name__)
 
 
 class ShareForm(forms.Form):
