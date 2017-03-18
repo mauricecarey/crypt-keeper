@@ -19,8 +19,8 @@ From the same directory as startup above:
     vagrant ssh
     cd /srv/crypt-keeper.local/crypt-keeper/crypt-keeper-django/crypt_keeper_server
     export DJANGO_SETTINGS_MODULE='crypt_keeper_server.prod_settings'
-    /srv/crypt-keeper.local/env/bin/python manage.py createsuperuser
-    /srv/crypt-keeper.local/env/bin/python manage.py initial_setup 'aws_access_key' --aws_secret_key 'key'
+    /srv/crypt-keeper.local/venv/bin/python manage.py createsuperuser
+    /srv/crypt-keeper.local/venv/bin/python manage.py initial_setup 'aws_access_key' --aws_secret_key 'key'
     sudo service apache2 restart
 
 ## Create hostname alias
