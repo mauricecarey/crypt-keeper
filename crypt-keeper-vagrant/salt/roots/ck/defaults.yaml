@@ -1,0 +1,10 @@
+crypt_keeper:
+  url: crypt-keeper.local
+  base_dir: /srv/crypt-keeper.local
+  log_dir: /var/log/crypt-keeper
+  apache_username: www-data
+  install_username: vagrant
+  git_identity: /srv/ssh-key/id_rsa
+  django_log_name: django.log
+  log_name: debug.log
+  virtual_env_location: /srv/crypt-keeper.local/env

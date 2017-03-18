@@ -1,16 +1,17 @@
+{%- from "ck/map.jinja" import crypt_keeper with context %}
 import os
 import logging.config
 from .configuration import Configuration
 
 ALLOWED_HOSTS = [
-    'crypt-keeper.com',
+    '{{ crypt_keeper.url }}',
     'localhost',
 ]
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
 )
-BASE_INSTALL_DIR = '/srv/crypt-keeper.com'
+BASE_INSTALL_DIR = '{{ crypt_keeper.base_dir }}'
 BASE_DIR = os.path.join(BASE_INSTALL_DIR, 'crypt-keeper/crypt-keeper-django/crypt_keeper_server')
 CONFIGURATION_FILE_NAME = os.path.join(BASE_INSTALL_DIR, 'crypt_keeper_config.yml')
 DATABASES = {
@@ -116,13 +117,13 @@ LOGGING = {
         'ck-file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/crypt-keeper/debug.log',
+            'filename': '{{ crypt_keeper.log_dir }}/{{ crypt_keeper.log_name }}',
             'formatter': 'verbose',
         },
         'django-file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/crypt-keeper/django.log',
+            'filename': '{{ crypt_keeper.log_dir }}/{{ crypt_keeper.django_log_name }}',
             'formatter': 'verbose',
         },
     },

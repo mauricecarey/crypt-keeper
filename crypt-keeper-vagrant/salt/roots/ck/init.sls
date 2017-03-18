@@ -1,3 +1,5 @@
+{% from "ck/map.jinja" import crypt_keeper with context %}
+
 include:
   - docker
   - docker.containers
@@ -28,15 +30,15 @@ psycopg2-support-packages:
     - pkgs:
       - libpq-dev
 
-# cd /srv/crypt-keeper.com
+# cd {{ crypt_keeper.base_dir }}
 # sudo git clone https://mcarey@bitbucket.org/prometheussoftware/crypt-keeper.git
-# sudo chown -R vagrant .
+# sudo chown -R {{ crypt_keeper.install_username }} .
 
 crypt-keeper-dir:
   file.directory:
-    - name: /srv/crypt-keeper.com
-    - user: vagrant
-    - group: www-data
+    - name: {{ crypt_keeper.base_dir }}
+    - user: {{ crypt_keeper.install_username }}
+    - group: {{ crypt_keeper.apache_username }}
     - mode: 775
     - recurse:
       - user
@@ -49,23 +51,23 @@ crypt-keeper-dir:
 
 crypt-keeper-source:
   file.directory:
-    - name: /srv/crypt-keeper.com
-    - user: vagrant
-    - group: www-data
+    - name: {{ crypt_keeper.base_dir }}
+    - user: {{ crypt_keeper.install_username }}
+    - group: {{ crypt_keeper.apache_username }}
     - mode: 775
   git.latest:
     - name: git@bitbucket.org:prometheussoftware/crypt-keeper.git
-    - target: /srv/crypt-keeper.com/crypt-keeper
+    - target: {{ crypt_keeper.base_dir }}/crypt-keeper
     - force_clone: True
     - force_reset: True
-    - user: vagrant
-    - identity: /srv/ssh-key/id_rsa
+    - user: {{ crypt_keeper.install_username }}
+    - identity: {{ crypt_keeper.git_identity }}
     - require:
       - file: crypt-keeper-source
 
 # set-permissions:
 #   cmd.run:
-#     - name: chown -R vagrant:www-data
+#     - name: chown -R {{ crypt_keeper.install_username }}:{{ crypt_keeper.apache_username }}
 
 # cd crypt-keeper/crypt-keeper-django/
 # sudo virtualenv -p `which python3` env
@@ -74,31 +76,31 @@ crypt-keeper-source:
 
 crypt-keeper-log:
   file.directory:
-    - name: /var/log/crypt-keeper
-    - user: vagrant
-    - group: www-data
+    - name: {{ crypt_keeper.log_dir }}
+    - user: {{ crypt_keeper.install_username }}
+    - group: {{ crypt_keeper.apache_username }}
     - mode: 775
 
 crypt-keeper-django-log-file:
   file.managed:
-    - name: /var/log/crypt-keeper/django.log
-    - user: vagrant
-    - group: www-data
+    - name: {{ crypt_keeper.log_dir }}/{{ crypt_keeper.django_log_name }}
+    - user: {{ crypt_keeper.install_username }}
+    - group: {{ crypt_keeper.apache_username }}
     - mode: 775
 
 crypt-keeper-log-file:
   file.managed:
-    - name: /var/log/crypt-keeper/debug.log
-    - user: vagrant
-    - group: www-data
+    - name: {{ crypt_keeper.log_dir }}/{{ crypt_keeper.log_name }}
+    - user: {{ crypt_keeper.install_username }}
+    - group: {{ crypt_keeper.apache_username }}
     - mode: 775
 
 crypt-keeper-virtualenv:
   virtualenv.managed:
-    - name: /srv/crypt-keeper.com/env
+    - name: {{ crypt_keeper.virtual_env_location }}
     - python: /usr/bin/python3
-    - requirements: /srv/crypt-keeper.com/crypt-keeper/crypt-keeper-django/requirements.txt
-    - user: vagrant
+    - requirements: {{ crypt_keeper.base_dir }}/crypt-keeper/crypt-keeper-django/requirements.txt
+    - user: {{ crypt_keeper.install_username }}
     - require:
       - pkg: python-environment
       - pkg: lxml-support-packages
@@ -114,25 +116,25 @@ crypt-keeper-virtualenv:
 
 ck-prod-settings:
   file.managed:
-    - name: /srv/crypt-keeper.com/crypt-keeper/crypt-keeper-django/crypt_keeper_server/crypt_keeper_server/prod_settings.py
+    - name: {{ crypt_keeper.base_dir }}/crypt-keeper/crypt-keeper-django/crypt_keeper_server/crypt_keeper_server/prod_settings.py
     - source: salt://ck/files/prod_settings.py
-    - user: vagrant
+    - user: {{ crypt_keeper.install_username }}
     - template: jinja
 
 crypt_keeper_config.yml:
   file.managed:
-    - name: /srv/crypt-keeper.com/crypt_keeper_config.yml
+    - name: {{ crypt_keeper.base_dir }}/crypt_keeper_config.yml
     - source: salt://ck/files/crypt_keeper_config.yml
-    - user: vagrant
+    - user: {{ crypt_keeper.install_username }}
     - template: jinja
 
 crypt-keeper-migrate:
   cmd.run:
-    - name: /srv/crypt-keeper.com/env/bin/python manage.py migrate
-    - cwd: /srv/crypt-keeper.com/crypt-keeper/crypt-keeper-django/crypt_keeper_server
+    - name: {{ crypt_keeper.virtual_env_location }}/bin/python manage.py migrate
+    - cwd: {{ crypt_keeper.base_dir }}/crypt-keeper/crypt-keeper-django/crypt_keeper_server
     - env: 
       - DJANGO_SETTINGS_MODULE: 'crypt_keeper_server.prod_settings'
-    - user: vagrant
+    - user: {{ crypt_keeper.install_username }}
     - require_in:
       - pkg: apache
     - require:
@@ -143,11 +145,11 @@ crypt-keeper-migrate:
 
 crypt-keeper-collectstatic:
   cmd.run:
-    - name: /srv/crypt-keeper.com/env/bin/python manage.py collectstatic --noinput
-    - cwd: /srv/crypt-keeper.com/crypt-keeper/crypt-keeper-django/crypt_keeper_server
+    - name: {{ crypt_keeper.virtual_env_location }}/bin/python manage.py collectstatic --noinput
+    - cwd: {{ crypt_keeper.base_dir }}/crypt-keeper/crypt-keeper-django/crypt_keeper_server
     - env: 
       - DJANGO_SETTINGS_MODULE: 'crypt_keeper_server.prod_settings'
-    - user: vagrant
+    - user: {{ crypt_keeper.install_username }}
     - require_in:
       - pkg: apache
     - require:

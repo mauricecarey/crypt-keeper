@@ -1,0 +1,3 @@
+{% import_yaml "ck/defaults.yaml" as defaults %}
+
+{% set crypt_keeper = salt['pillar.get']('crypt_keeper', default=defaults['crypt_keeper'], merge=True) %}
