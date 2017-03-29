@@ -4,9 +4,12 @@ from boto3 import client
 from botocore.client import Config
 from botocore.exceptions import ClientError
 from django.conf import settings
-from logging import getLogger, WARN
+from logging import getLogger, WARN, INFO
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist
+from guardian.shortcuts import assign_perm
+
+from document_description_store.models import DocumentDescription
 
 log = getLogger('crypt-keeper.' + __name__)
 
@@ -92,3 +95,40 @@ def get_user_for_username(username):
         if log.isEnabledFor(WARN):
             log.warning('Attempt to lookup non-existent user with name {username}.'.format(username=username))
     return user
+
+
+def validate_username(username):
+    if get_user_for_username(username) is not None:
+        return True
+    return False
+
+
+def get_document_for_document_id(document_id):
+    document = None
+    try:
+        document = DocumentDescription.objects.get(pk=document_id)
+    except ObjectDoesNotExist:
+        if log.isEnabledFor(WARN):
+            log.warning('Attempt to lookup non-existent document with document id: {document_id}.'.format(
+                document_id=document_id
+            ))
+    return document
+
+
+def validate_document_id(document_id):
+    if get_document_for_document_id(document_id) is not None:
+        return True
+    return False
+
+def add_permission_for_document(document, username):
+    user = get_user_for_username(username)
+    group = get_group_for_document(document)
+    if group and user:
+        group.user_set.add(user)
+        group.save()
+    assign_perm('view_document_description', user, document)
+    if log.isEnabledFor(INFO):
+        log.info('Adding permissions for {new_user} to access document id {document_id}.'.format(
+            new_user=user,
+            document_id=document.document_id,
+        ))
