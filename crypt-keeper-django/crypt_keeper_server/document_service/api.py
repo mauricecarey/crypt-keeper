@@ -12,9 +12,20 @@ from guardian.shortcuts import assign_perm
 from document_description_store.models import DocumentDescription, DocumentMetadata
 from document_description_store import api as document_api
 from secret_store.helper import get_default_key_pair, decrypt, generate_symmetric_key, encrypt, AES_CBC
-from .helper import sign_url, generate_document_id, GET, PUT
+from .helper import (
+    sign_url,
+    generate_document_id,
+    GET,
+    PUT,
+    validate_username,
+    validate_document_uuid,
+    add_permission_for_document,
+    get_document_for_document_uuid,
+    get_group_for_document,
+)
 from django.conf import settings
 from logging import getLogger, DEBUG
+from uuid import UUID
 
 log = getLogger('crypt-keeper.' + __name__)
 
@@ -35,6 +46,13 @@ class Url(object):
         self.symmetric_key = symmetric_key
 
 
+class Share(object):
+    def __init__(self, document_id=None, username=None, users=None):
+        self.document_id = document_id
+        self.username = username
+        self.users = users
+
+
 class UploadValidation(Validation):
     def is_valid(self, bundle, request=None):
         if not bundle.data:
@@ -49,6 +67,35 @@ class UploadValidation(Validation):
             if document_metadata.get(field, None) is None:
                 errors[field] = 'Document metadata must have field: {field}'.format(field=field)
         return errors
+
+
+class ShareValidation(Validation):
+    def is_valid(self, bundle, request=None):
+        if not bundle.data:
+            return 'Must provide document id and username.'
+        document_id = bundle.data.get('document_id', None)
+        document_validation = ShareValidation.document_id_validation(document_id, bundle.request.user)
+        if document_validation is not None:
+            return document_validation
+        username = bundle.data.get('username', None)
+        if username is None:
+            return 'Must provide username.'
+        if not validate_username(username):
+            return 'Must provide a valid username.'
+
+    @classmethod
+    def document_id_validation(cls, document_id, user):
+        if document_id is None:
+            return 'Must provide document id.'
+        try:
+            document_uuid = UUID(document_id)
+            if not validate_document_uuid(document_uuid):
+                return 'Must provide a valid document id.'
+        except ValueError as e:
+            msg = 'Request with badly formed document ID string: {document_id}'.format(document_id=document_id)
+            log.info(msg, exc_info=e)
+            return msg
+        return None
 
 
 class UrlResource(Resource):
@@ -195,3 +242,75 @@ class UploadUrlResource(UrlResource):
 
         assign_perm('view_document_description', document.customer, document)
         return document
+
+
+class ShareResource(Resource):
+    document_id = fields.CharField(attribute='document_id', null=True)
+    username = fields.CharField(attribute='username', null=True)
+    users = fields.ListField(attribute='users', null=True)
+
+    class Meta:
+        list_allowed_methods = ['post']
+        detail_allowed_methods = ['get']
+        resource_name = '%s/share' % ROOT_RESOURCE_NAME
+        object_class = Share
+        authorization = DjangoAuthorization()
+        authentication = ApiKeyAuthentication()
+        always_return_data = True
+        validation = ShareValidation()
+
+    def dehydrate(self, bundle):
+        if bundle is None or bundle.data is None:
+            return bundle
+        data = dict(bundle.data)
+        for key in data:
+            if data.get(key) is None:
+                del bundle.data[key]
+        return bundle
+
+    def detail_uri_kwargs(self, bundle_or_obj):
+        kwargs = {}
+        if isinstance(bundle_or_obj, Bundle):
+            if isinstance(bundle_or_obj.obj, Share):
+                kwargs['pk'] = bundle_or_obj.obj.document_id
+        elif isinstance(bundle_or_obj, Share):
+            kwargs['pk'] = bundle_or_obj.document_id
+        return kwargs
+
+    def obj_create(self, bundle, **kwargs):
+        if not super().is_valid(bundle):
+            raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
+        log.info('Received request to share a document.')
+        user = bundle.request.user
+        if log.isEnabledFor(DEBUG):
+            log.debug('User for request: {user}.'.format(
+                user=user
+            ))
+
+        document_id = bundle.data.get('document_id')
+        username = bundle.data.get('username')
+        document = get_document_for_document_uuid(document_id)
+        if document.customer != user:
+            self.unauthorized_result(Unauthorized(
+                '{user} is not authorized for operations on this document.'.format(user=user.username)
+            ))
+
+        add_permission_for_document(document, username)
+
+        bundle.obj = Share(document_id, username)
+        return bundle
+
+    def obj_get(self, bundle, **kwargs):
+        document_id = kwargs['pk']
+        user = bundle.request.user
+        validation_message = ShareValidation.document_id_validation(document_id, user)
+        if validation_message is not None:
+            raise ImmediateHttpResponse(response=self.error_response(bundle.request, validation_message))
+        document = DocumentDescription.objects.get(document_id=document_id)
+        if document.customer != user:
+            self.unauthorized_result(Unauthorized(
+                '{user} is not authorized for operations on this document.'.format(user=user.username)
+            ))
+        document_group = get_group_for_document(document)
+        users = [x.username for x in document_group.user_set.all()]
+        return Share(users=users, document_id=document_id)

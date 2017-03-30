@@ -8,6 +8,7 @@ from document_description_store.models import DocumentDescription
 
 BASE_DOWNLOAD_URL = '/api/v1/document_service/download_url/'
 BASE_UPLOAD_URL = '/api/v1/document_service/upload_url/'
+BASE_SHARE_URL = '/api/v1/document_service/share/'
 
 
 class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
@@ -38,6 +39,11 @@ class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
             document_id=self.document.document_id,
         )
         self.upload_url = '{base_url}'.format(base_url=BASE_UPLOAD_URL)
+        self.share_get_url = '{base_url}{document_id}/'.format(
+            base_url=BASE_SHARE_URL,
+            document_id=self.document.document_id,
+        )
+        self.share_post_url = '{base_url}'.format(base_url=BASE_SHARE_URL)
 
         self.api_key = 'test'
 
@@ -182,3 +188,114 @@ class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
         content = response.content.decode(response.charset)
         self.assertValidJSON(content)
         self.assertEqual(DocumentDescription.objects.count(), 2)
+
+    def check_share_get_response(self, response):
+        response_map = self.deserialize(response)
+        self.assertKeys(
+            response_map,
+            ['document_id', 'users', 'resource_uri']
+        )
+        self.assertDictEqual(
+            response_map,
+            {
+                'document_id': str(self.document.document_id),
+                'resource_uri': self.share_get_url,
+                'users': [self.username, 'authorized_other'],
+            }
+        )
+
+    def check_share_post_response(self, response):
+        response_map = self.deserialize(response)
+        self.assertKeys(
+            response_map,
+            ['document_id', 'username', 'resource_uri']
+        )
+        self.assertDictEqual(
+            response_map,
+            {
+                'document_id': str(self.document.document_id),
+                'resource_uri': self.share_get_url,
+                'username': self.username,
+            }
+        )
+
+    def test_share_get_list_unauthenticated(self):
+        self.assertHttpMethodNotAllowed(self.api_client.get(BASE_SHARE_URL))
+
+    def test_share_get_list_authenticated(self):
+        self.assertHttpMethodNotAllowed(self.api_client.get(BASE_SHARE_URL, authentication=self.get_credentials()))
+
+    def test_share_get_detail_unauthenticated(self):
+        self.assertHttpUnauthorized(self.api_client.get(self.share_get_url))
+
+    def test_share_get_detail_json(self):
+        response = self.api_client.get(self.share_get_url, authentication=self.get_credentials())
+        self.assertValidJSONResponse(response)
+        self.check_share_get_response(response)
+
+    def test_share_get_detail_json_wrong_user(self):
+        self.assertHttpUnauthorized(
+            self.api_client.get(self.share_get_url, authentication=self.create_apikey('tester2', self.api_key))
+        )
+
+    def test_share_get_detail_json_authorized_user(self):
+        response = self.api_client.get(
+            self.share_get_url,
+            authentication=self.create_apikey('authorized_other', self.api_key)
+        )
+        self.assertHttpUnauthorized(response)
+
+    def test_share_get_detail_xml(self):
+        response = self.api_client.get(self.share_get_url, format='xml', authentication=self.get_credentials())
+        self.assertValidXMLResponse(response)
+
+    def test_share_post_detail_unauthenticated(self):
+        self.assertHttpUnauthorized(self.api_client.post(self.share_post_url))
+
+    def test_share_post_detail_unauthorized(self):
+        share_data = {
+            'document_id': self.document.document_id,
+            'username': self.username,
+        }
+        authorization = self.create_apikey('authorized_other', self.api_key)
+        response = self.api_client.post(self.share_post_url, data=share_data, authentication=authorization)
+        self.assertHttpUnauthorized(response)
+
+    def test_shared_post_detail_json_null_data(self):
+        response = self.api_client.post(self.share_post_url, authentication=self.get_credentials())
+        self.assertHttpBadRequest(response)
+
+    def test_share_post_detail_json_empty_data(self):
+        share_data = {
+            'document_id': '',
+            'username': '',
+        }
+        response = self.api_client.post(self.share_post_url, data=share_data, authentication=self.get_credentials())
+        self.assertHttpBadRequest(response)
+
+    def test_share_post_detail_json_empty_username(self):
+        share_data = {
+            'document_id': self.document.document_id,
+            'username': '',
+        }
+        response = self.api_client.post(self.share_post_url, data=share_data, authentication=self.get_credentials())
+        self.assertHttpBadRequest(response)
+
+    def test_share_post_detail_json_empty_document_id(self):
+        share_data = {
+            'document_id': '',
+            'username': self.username,
+        }
+        response = self.api_client.post(self.share_post_url, data=share_data, authentication=self.get_credentials())
+        self.assertHttpBadRequest(response)
+
+    def test_share_post_detail_json(self):
+        share_data = {
+            'document_id': self.document.document_id,
+            'username': self.username,
+        }
+        response = self.api_client.post(self.share_post_url, data=share_data, authentication=self.get_credentials())
+        self.assertHttpCreated(response)
+        content = response.content.decode(response.charset)
+        self.assertValidJSON(content)
+        self.check_share_post_response(response)

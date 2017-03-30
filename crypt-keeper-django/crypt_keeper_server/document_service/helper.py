@@ -115,10 +115,29 @@ def get_document_for_document_id(document_id):
     return document
 
 
+def get_document_for_document_uuid(document_id):
+    document = None
+    try:
+        document = DocumentDescription.objects.get(document_id=document_id)
+    except ObjectDoesNotExist:
+        if log.isEnabledFor(WARN):
+            log.warning('Attempt to lookup non-existent document with document id: {document_id}.'.format(
+                document_id=document_id
+            ))
+    return document
+
+
 def validate_document_id(document_id):
     if get_document_for_document_id(document_id) is not None:
         return True
     return False
+
+
+def validate_document_uuid(document_id):
+    if get_document_for_document_uuid(document_id) is not None:
+        return True
+    return False
+
 
 def add_permission_for_document(document, username):
     user = get_user_for_username(username)

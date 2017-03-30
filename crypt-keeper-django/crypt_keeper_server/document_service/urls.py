@@ -4,7 +4,7 @@ from . import views
 from tastypie.api import Api
 from secret_store.api import KeyPairResource, PublicKeyResource, PrivateKeyResource
 from document_description_store.api import DocumentDescriptionResource, DocumentMetadataResource
-from .api import DownloadUrlResource, UploadUrlResource
+from .api import DownloadUrlResource, UploadUrlResource, ShareResource
 
 v1_api = Api(api_name='v1')
 v1_api.register(KeyPairResource())
@@ -14,6 +14,7 @@ v1_api.register(DocumentDescriptionResource())
 v1_api.register(DocumentMetadataResource())
 v1_api.register(DownloadUrlResource())
 v1_api.register(UploadUrlResource())
+v1_api.register(ShareResource())
 
 urlpatterns = [
     url(r'^$', views.HomeView.as_view(), name='homepage'),
