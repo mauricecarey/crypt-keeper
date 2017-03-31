@@ -53,7 +53,6 @@ class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
             'compressed': self.document.document_metadata.compressed,
             'content_length': str(self.document.document_metadata.content_length),
             'name': self.document.document_metadata.name,
-            'uri': self.document.document_metadata.uri,
             'encryption_type': AES_CBC,
         }
 
@@ -165,14 +164,6 @@ class DocumentServiceApiTestCase(ResourceTestCaseMixin, TestCase):
 
     def test_upload_post_detail_json_empty_content_type(self):
         self.document_metadata.pop('content_type', None)
-        upload_data = {
-            'document_metadata': self.document_metadata
-        }
-        response = self.api_client.post(self.upload_url, data=upload_data, authentication=self.get_credentials())
-        self.assertHttpBadRequest(response)
-
-    def test_upload_post_detail_json_empty_uri(self):
-        self.document_metadata.pop('uri', None)
         upload_data = {
             'document_metadata': self.document_metadata
         }

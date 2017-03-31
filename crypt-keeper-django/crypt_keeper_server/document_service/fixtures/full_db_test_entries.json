@@ -60,7 +60,6 @@
     "name": "test.txt",
     "content_type": "text/plain",
     "content_length": 10,
-    "uri": "http://www.mauricecarey.com/",
     "compressed": false
   }
 },

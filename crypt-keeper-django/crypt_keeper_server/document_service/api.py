@@ -62,7 +62,7 @@ class UploadValidation(Validation):
             return {'__all__': 'Must provide document metadata.'}
 
         errors = {}
-        expected_fields = ['name', 'compressed', 'content_length', 'content_type', 'uri']
+        expected_fields = ['name', 'compressed', 'content_length', 'content_type']
         for field in expected_fields:
             if document_metadata.get(field, None) is None:
                 errors[field] = 'Document metadata must have field: {field}'.format(field=field)
@@ -209,7 +209,6 @@ class UploadUrlResource(UrlResource):
         document_metadata.content_length = document_metadata_map.get('content_length')
         document_metadata.content_type = document_metadata_map.get('content_type')
         document_metadata.name = document_metadata_map.get('name')
-        document_metadata.uri = document_metadata_map.get('uri')
         document_metadata.encryption_type = document_metadata_map.get('encryption_type', AES_CBC)
         document_metadata.save()
         if log.isEnabledFor(DEBUG):

@@ -10,7 +10,6 @@ class DocumentMetadata(models.Model):
     name = models.TextField()
     content_length = models.BigIntegerField()
     content_type = models.CharField(max_length=1000)
-    uri = models.URLField()
     compressed = models.BooleanField(default=False)
     encryption_type = models.CharField(max_length=20, default=AES_CBC)
 
