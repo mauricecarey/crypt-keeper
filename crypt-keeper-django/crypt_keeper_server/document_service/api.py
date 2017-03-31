@@ -29,7 +29,7 @@ from uuid import UUID
 
 log = getLogger('crypt-keeper.' + __name__)
 
-ROOT_RESOURCE_NAME = 'document_service'
+ROOT_RESOURCE_NAME = 'secure_document_service'
 
 
 class DocumentMetadataResource(document_api.DocumentMetadataResource):

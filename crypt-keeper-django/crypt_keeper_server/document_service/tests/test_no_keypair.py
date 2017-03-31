@@ -6,8 +6,10 @@ from guardian.shortcuts import assign_perm
 from secret_store.helper import decrypt
 from document_description_store.models import DocumentDescription
 
-BASE_DOWNLOAD_URL = '/api/v1/document_service/download_url/'
-BASE_UPLOAD_URL = '/api/v1/document_service/upload_url/'
+BASE_SERVICE_URL = '/api/v1/secure_document_service/'
+BASE_DOWNLOAD_URL = '{base_service_url}download_url/'.format(base_service_url=BASE_SERVICE_URL)
+BASE_UPLOAD_URL = '{base_service_url}upload_url/'.format(base_service_url=BASE_SERVICE_URL)
+BASE_SHARE_URL = '{base_service_url}share/'.format(base_service_url=BASE_SERVICE_URL)
 
 
 class NoKeyPairApiTestCase(ResourceTestCaseMixin, TestCase):
